@@ -32,7 +32,7 @@ export default async function Home({
     <>
       <Hero />
 
-      <div className="min-h-screen">
+      <div className="min-h-screen max-w-7xl mx-auto">
         {posts.length === 0 ? (
           <div className="flex items-center justify-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
