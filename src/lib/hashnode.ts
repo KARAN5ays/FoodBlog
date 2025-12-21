@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { HASHNODE_DOMAIN, HASHNODE_API } from './config';
+import { cache } from 'react';
 
 export interface HashnodePost {
   title: string;
@@ -86,22 +86,32 @@ const SINGLE_POST_QUERY = `
   }
 `;
 
-export const getPosts = async () => {
+export const getPosts = cache(async () => {
   try {
     let allEdges: PostEdge[] = [];
     let hasNextPage = true;
     let cursor: string | null = null;
 
     while (hasNextPage) {
-      const res: any = await axios.post(
-        HASHNODE_API,
-        {
+      const res: Response = await fetch(HASHNODE_API, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           query: ALL_POSTS_QUERY,
-          variables: { host: HASHNODE_DOMAIN, after: cursor }
-        }
-      );
+          variables: { host: HASHNODE_DOMAIN, after: cursor },
+        }),
+        next: { revalidate: 3600 }, // Cache for 1 hour
+      });
 
-      const postsData: any = res?.data?.data?.publication?.posts;
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const json = (await res.json()) as any;
+      const postsData = (json?.data?.data?.publication?.posts || json?.data?.publication?.posts) as any;
+
       if (!postsData) break;
 
       const fetchedEdges = postsData.edges || [];
@@ -124,20 +134,30 @@ export const getPosts = async () => {
     console.error("Error fetching posts:", error);
     return [];
   }
-};
+});
 
-export const getPostBySlug = async (slug: string) => {
+export const getPostBySlug = cache(async (slug: string) => {
   try {
-    const res = await axios.post(
-      HASHNODE_API,
-      {
+    const res: Response = await fetch(HASHNODE_API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         query: SINGLE_POST_QUERY,
-        variables: { host: HASHNODE_DOMAIN, slug }
-      }
-    );
-    return res?.data?.data?.publication?.post as HashnodePost | null;
+        variables: { host: HASHNODE_DOMAIN, slug },
+      }),
+      next: { revalidate: 3600 },
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    const json = (await res.json()) as any;
+    return (json?.data?.data?.publication?.post || json?.data?.publication?.post) as HashnodePost | null;
   } catch (error) {
     console.error(`Error fetching post ${slug}:`, error);
     return null;
   }
-};
+});

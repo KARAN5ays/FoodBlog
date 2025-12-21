@@ -69,9 +69,10 @@ const CategorySection = ({ posts }: CategorySectionProps) => {
                                 <button
                                     key={key}
                                     onClick={() => setSelectedCategory(key)}
+                                    suppressHydrationWarning={true}
                                     className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 border ${isSelected
-                                            ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105'
-                                            : 'bg-surface border-border-custom text-text-secondary hover:border-blue-500/50 hover:-translate-y-0.5 shadow-sm'
+                                        ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105'
+                                        : 'bg-surface border-border-custom text-text-secondary hover:border-blue-500/50 hover:-translate-y-0.5 shadow-sm'
                                         }`}
                                 >
                                     {config.displayName}

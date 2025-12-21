@@ -32,10 +32,19 @@ export default async function Home({
     <>
       <Hero />
 
-      <div className="min-h-screen">
+      <div className="min-h-[50vh] max-w-7xl mx-auto">
         {posts.length === 0 ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+          <div className="flex flex-col items-center justify-center py-32 px-4 text-center">
+            <h2 className="text-2xl font-bold mb-4">No posts found</h2>
+            <p className="text-text-secondary max-w-md">
+              We couldn't find any articles at the moment. Please check back later or try refreshing the page.
+            </p>
+            <a
+              href="/"
+              className="mt-8 px-6 py-2 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 transition-colors"
+            >
+              Refresh Page
+            </a>
           </div>
         ) : (
           <>
