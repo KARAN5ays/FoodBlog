@@ -62,6 +62,7 @@ const NewsletterCTA = () => {
                                         <input
                                             type="email"
                                             id="newsletterEmail"
+                                            suppressHydrationWarning={true}
                                             className="peer w-full px-4 py-4 bg-muted border border-border-custom rounded-xl text-foreground placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                                             placeholder="name@example.com"
                                             value={email}
@@ -78,6 +79,7 @@ const NewsletterCTA = () => {
 
                                     <button
                                         type="submit"
+                                        suppressHydrationWarning={true}
                                         className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] hover:-translate-y-0.5"
                                     >
                                         Subscribe for free

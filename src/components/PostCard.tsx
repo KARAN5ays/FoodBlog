@@ -1,6 +1,19 @@
+'use client';
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { HashnodePost } from '@/lib/hashnode';
+import dynamic from 'next/dynamic';
+
+const InteractionButtons = dynamic(() => import('./InteractionButtons'), {
+    ssr: false,
+    loading: () => (
+        <div className="flex items-center gap-4 opacity-0">
+            <div className="p-2 w-[36px] h-[36px]"></div>
+            <div className="p-2 w-[36px] h-[36px]"></div>
+        </div>
+    )
+});
 
 interface PostCardProps {
     post: HashnodePost;
@@ -14,14 +27,15 @@ const PostCard = ({ post, compact = false }: PostCardProps) => {
 
     if (compact) {
         return (
-            <Link href={`/posts/${post.slug}`} className="group block h-full">
+            <div className="group relative block h-full">
                 <div className="h-full bg-surface border border-border-custom rounded-xl overflow-hidden shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-md">
                     <div className="relative h-32 overflow-hidden">
-                        <img
+                        <Image
                             src={image}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-110"
                             alt={post.title}
-                            loading="lazy"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                         <span className="absolute top-2 right-2 px-2 py-0.5 bg-white/90 dark:bg-slate-800/90 text-slate-800 dark:text-slate-100 text-[10px] font-bold rounded-full shadow-sm">
                             {category}
@@ -35,23 +49,29 @@ const PostCard = ({ post, compact = false }: PostCardProps) => {
                         <h6 className="text-sm font-bold text-foreground line-clamp-2 leading-snug mb-1 group-hover:text-blue-600 transition-colors">
                             {post.title}
                         </h6>
-                        <p className="text-[11px] text-text-secondary line-clamp-2 leading-relaxed">
+                        <p className="text-[11px] text-text-secondary line-clamp-2 leading-relaxed mb-2">
                             {post.brief || 'Click to read more...'}
                         </p>
+                        <div className="relative z-10 flex justify-end">
+                            <InteractionButtons postSlug={post.slug} />
+                        </div>
                     </div>
                 </div>
-            </Link>
+                {/* Stretched link for better UX */}
+                <Link href={`/posts/${post.slug}`} className="absolute inset-0 z-0" aria-hidden="true" />
+            </div>
         );
     }
 
     return (
         <div className="group relative h-full flex flex-col bg-surface border border-border-custom rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
             <div className="relative h-48 overflow-hidden">
-                <img
+                <Image
                     src={image}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
                     alt={post.title}
-                    loading="lazy"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                 />
                 <span className="absolute top-3 right-3 px-3 py-1 bg-blue-600 text-white text-[10px] font-bold rounded-full shadow-lg">
                     {category}
@@ -77,6 +97,9 @@ const PostCard = ({ post, compact = false }: PostCardProps) => {
                         Read More
                         <span className="transition-transform group-hover:translate-x-1">→</span>
                     </Link>
+                    <div className="relative z-10">
+                        <InteractionButtons postSlug={post.slug} />
+                    </div>
                 </div>
             </div>
 

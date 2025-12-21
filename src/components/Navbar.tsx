@@ -67,6 +67,7 @@ const Navbar = ({ posts }: NavbarProps) => {
 
                         {/* Theme toggle */}
                         <button
+                            suppressHydrationWarning
                             onClick={toggleTheme}
                             className={`flex items-center gap-2 px-4 py-2 rounded-full border border-border-custom transition-all duration-300 hover:border-blue-500/50 ${isDark ? 'text-yellow-400 hover:bg-yellow-400/10' : 'text-slate-700 hover:bg-slate-100'
                                 }`}
@@ -78,6 +79,7 @@ const Navbar = ({ posts }: NavbarProps) => {
                         </button>
 
                         <button
+                            suppressHydrationWarning
                             onClick={handleSubscribe}
                             className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg shadow-blue-500/30 hover:bg-blue-700 transition-all hover:-translate-y-0.5"
                         >
@@ -121,6 +123,7 @@ const Navbar = ({ posts }: NavbarProps) => {
                                     {isDark ? 'Light Mode' : 'Dark Mode'}
                                 </button>
                                 <button
+                                    suppressHydrationWarning
                                     onClick={() => {
                                         setIsMenuOpen(false);
                                         handleSubscribe();

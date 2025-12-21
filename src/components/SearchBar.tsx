@@ -51,6 +51,7 @@ const SearchBar = ({ posts = [], placeholder }: SearchBarProps) => {
                 <Search size={18} />
             </span>
             <input
+                suppressHydrationWarning
                 type="text"
                 className="block w-full pl-10 pr-4 py-2 bg-muted border-none rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-foreground"
                 placeholder={placeholder}
@@ -81,7 +82,7 @@ const SearchBar = ({ posts = [], placeholder }: SearchBarProps) => {
                                 />
                                 <div className="ml-3 overflow-hidden">
                                     <h6 className="text-sm font-semibold text-foreground truncate">{node.title}</h6>
-                                    <p className="text-[10px] text-text-secondary mt-1">
+                                    <p className="text-[10px] text-text-secondary mt-1" suppressHydrationWarning>
                                         {new Date(node.publishedAt).toLocaleDateString()}
                                     </p>
                                 </div>
