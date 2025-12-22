@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Aerawat Engineering - Technology and Programming Blog",
     description: "Discover cutting-edge technology articles, programming tutorials, and engineering insights.",
-    url: "https://aerawat.com", // Replace with actual domain
+    url: "https://aerawat.com", // we will update this later
     siteName: "Aerawat Engineering",
     locale: "en_US",
     type: "website",
