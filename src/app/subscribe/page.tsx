@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 import React from 'react';
 import NewsletterCTA from '@/components/NewsletterCTA';
 import { Metadata } from 'next';
