@@ -26,7 +26,7 @@ export interface PostEdge {
 }
 
 const ALL_POSTS_QUERY = `
-  query GetAllPosts($host: String!, $after: String, $cacheBuster: String) {
+  query GetAllPosts($host: String!, $after: String) {
     publication(host: $host) {
       title
       posts(first: 50, after: $after) {
@@ -102,7 +102,6 @@ export const getPosts = async () => {
           variables: {
             host: HASHNODE_DOMAIN,
             after: cursor,
-            cacheBuster: new Date().toISOString()
           },
         }),
         // Use ISR with 60 seconds revalidation (faster updates)
