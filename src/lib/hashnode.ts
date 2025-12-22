@@ -1,5 +1,4 @@
 import { HASHNODE_DOMAIN, HASHNODE_API } from './config';
-import { cache } from 'react';
 
 export interface HashnodePost {
   title: string;
@@ -86,7 +85,7 @@ const SINGLE_POST_QUERY = `
   }
 `;
 
-export const getPosts = cache(async () => {
+export const getPosts = async () => {
   try {
     let allEdges: PostEdge[] = [];
     let hasNextPage = true;
@@ -102,7 +101,8 @@ export const getPosts = cache(async () => {
           query: ALL_POSTS_QUERY,
           variables: { host: HASHNODE_DOMAIN, after: cursor },
         }),
-        next: { revalidate: 3600 }, // Cache for 1 hour
+        next: { revalidate: 60 },
+        // Cache for 1 hour
       });
 
       if (!res.ok) {
@@ -134,9 +134,9 @@ export const getPosts = cache(async () => {
     console.error("Error fetching posts:", error);
     return [];
   }
-});
+};
 
-export const getPostBySlug = cache(async (slug: string) => {
+export const getPostBySlug = async (slug: string) => {
   try {
     const res: Response = await fetch(HASHNODE_API, {
       method: 'POST',
@@ -160,4 +160,4 @@ export const getPostBySlug = cache(async (slug: string) => {
     console.error(`Error fetching post ${slug}:`, error);
     return null;
   }
-});
+};

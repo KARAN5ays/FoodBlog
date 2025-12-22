@@ -17,6 +17,11 @@ const Navbar = ({ posts }: NavbarProps) => {
     const pathname = usePathname();
     const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const handleSubscribe = () => {
         router.push('/subscribe');
@@ -66,34 +71,41 @@ const Navbar = ({ posts }: NavbarProps) => {
                         </div>
 
                         {/* Theme toggle */}
-                        <button
-                            suppressHydrationWarning
-                            onClick={toggleTheme}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-full border border-border-custom transition-all duration-300 hover:border-blue-500/50 ${isDark ? 'text-yellow-400 hover:bg-yellow-400/10' : 'text-slate-700 hover:bg-slate-100'
-                                }`}
-                        >
-                            {isDark ? <Sun size={16} /> : <Moon size={16} />}
-                            <span className="text-xs font-semibold uppercase tracking-wider">
-                                {isDark ? 'Light' : 'Dark'}
-                            </span>
-                        </button>
+                        {mounted && (
+                            <button
+                                suppressHydrationWarning
+                                onClick={toggleTheme}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-full border border-border-custom transition-all duration-300 hover:border-blue-500/50 ${isDark ? 'text-yellow-400 hover:bg-yellow-400/10' : 'text-slate-700 hover:bg-slate-100'
+                                    }`}
+                            >
+                                {isDark ? <Sun size={16} /> : <Moon size={16} />}
+                                <span className="text-xs font-semibold uppercase tracking-wider">
+                                    {isDark ? 'Light' : 'Dark'}
+                                </span>
+                            </button>
+                        )}
 
-                        <button
-                            suppressHydrationWarning
-                            onClick={handleSubscribe}
-                            className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg shadow-blue-500/30 hover:bg-blue-700 transition-all hover:-translate-y-0.5"
-                        >
-                            Subscribe
-                        </button>
+                        {mounted && (
+                            <button
+                                suppressHydrationWarning
+                                onClick={handleSubscribe}
+                                className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg shadow-blue-500/30 hover:bg-blue-700 transition-all hover:-translate-y-0.5"
+                            >
+                                Subscribe
+                            </button>
+                        )}
                     </div>
 
                     {/* Mobile Menu Toggle */}
-                    <button
-                        className="lg:hidden p-2 text-text-secondary"
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    >
-                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
+                    {mounted && (
+                        <button
+                            suppressHydrationWarning
+                            className="lg:hidden p-2 text-text-secondary"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        >
+                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
+                    )}
                 </div>
 
                 {/* Mobile Menu */}
@@ -115,23 +127,27 @@ const Navbar = ({ posts }: NavbarProps) => {
                                 </Link>
                             ))}
                             <div className="flex items-center justify-between mt-2 pt-4 border-t border-border-custom">
-                                <button
-                                    onClick={toggleTheme}
-                                    className="flex items-center gap-2 text-text-secondary font-medium"
-                                >
-                                    {isDark ? <Sun size={20} /> : <Moon size={20} />}
-                                    {isDark ? 'Light Mode' : 'Dark Mode'}
-                                </button>
-                                <button
-                                    suppressHydrationWarning
-                                    onClick={() => {
-                                        setIsMenuOpen(false);
-                                        handleSubscribe();
-                                    }}
-                                    className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-md"
-                                >
-                                    Subscribe
-                                </button>
+                                {mounted && (
+                                    <button
+                                        onClick={toggleTheme}
+                                        className="flex items-center gap-2 text-text-secondary font-medium"
+                                    >
+                                        {isDark ? <Sun size={20} /> : <Moon size={20} />}
+                                        {isDark ? 'Light Mode' : 'Dark Mode'}
+                                    </button>
+                                )}
+                                {mounted && (
+                                    <button
+                                        suppressHydrationWarning
+                                        onClick={() => {
+                                            setIsMenuOpen(false);
+                                            handleSubscribe();
+                                        }}
+                                        className="bg-blue-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-md"
+                                    >
+                                        Subscribe
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

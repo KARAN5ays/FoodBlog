@@ -14,7 +14,12 @@ const SearchBar = ({ posts = [], placeholder }: SearchBarProps) => {
     const [inputValue, setInputValue] = useState('');
     const [suggestions, setSuggestions] = useState<PostEdge[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         if (!inputValue.trim()) {
@@ -50,19 +55,21 @@ const SearchBar = ({ posts = [], placeholder }: SearchBarProps) => {
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-secondary">
                 <Search size={18} />
             </span>
-            <input
-                suppressHydrationWarning
-                type="text"
-                className="block w-full pl-10 pr-4 py-2 bg-muted border-none rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-foreground"
-                placeholder={placeholder}
-                value={inputValue}
-                onChange={(e) => {
-                    setInputValue(e.target.value);
-                    setShowDropdown(true);
-                }}
-                onFocus={() => setShowDropdown(true)}
-                onBlur={handleBlur}
-            />
+            {mounted && (
+                <input
+                    suppressHydrationWarning
+                    type="text"
+                    className="block w-full pl-10 pr-4 py-2 bg-muted border-none rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-foreground"
+                    placeholder={placeholder}
+                    value={inputValue}
+                    onChange={(e) => {
+                        setInputValue(e.target.value);
+                        setShowDropdown(true);
+                    }}
+                    onFocus={() => setShowDropdown(true)}
+                    onBlur={handleBlur}
+                />
+            )}
 
             {/* Dropdown Results */}
             {showDropdown && inputValue && (
