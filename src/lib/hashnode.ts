@@ -28,6 +28,7 @@ export interface PostEdge {
 const ALL_POSTS_QUERY = `
   query GetAllPosts($host: String!, $after: String) {
     publication(host: $host) {
+      id
       title
       posts(first: 50, after: $after) {
         totalDocuments
@@ -37,6 +38,7 @@ const ALL_POSTS_QUERY = `
         }
         edges {
           node {
+            id
             title
             slug
             brief
@@ -45,10 +47,12 @@ const ALL_POSTS_QUERY = `
               url
             }
             author {
+              id
               name
               profilePicture
             }
             tags {
+              id
               name
             }
           }
@@ -61,7 +65,9 @@ const ALL_POSTS_QUERY = `
 const SINGLE_POST_QUERY = `
   query GetPost($host: String!, $slug: String!) {
     publication(host: $host) {
+      id
       post(slug: $slug) {
+        id
         title
         slug
         brief
@@ -70,10 +76,12 @@ const SINGLE_POST_QUERY = `
           url
         }
         author {
+          id
           name
           profilePicture
         }
         tags {
+          id
           name
         }
         content {
