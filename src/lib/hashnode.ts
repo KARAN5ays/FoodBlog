@@ -110,9 +110,15 @@ export const getPosts = async () => {
       const json = await res.json();
       const postsData = json?.data?.publication?.posts;
 
-      if (!postsData) break;
+      if (!postsData) {
+        console.log("No postsData found in response.");
+        break;
+      }
 
-      allEdges = allEdges.concat(postsData.edges || []);
+      const edges = postsData.edges || [];
+      console.log(`[Hashnode] Page fetched. Count: ${edges.length}, HasNext: ${postsData.pageInfo?.hasNextPage}, Cursor: ${postsData.pageInfo?.endCursor}`);
+
+      allEdges = allEdges.concat(edges);
       hasNextPage = postsData.pageInfo?.hasNextPage;
       cursor = postsData.pageInfo?.endCursor || null;
     }
