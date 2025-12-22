@@ -1,4 +1,4 @@
-export const revalidate = 120;
+export const revalidate = 60;
 
 import React from 'react';
 import Hero from '@/components/Hero';

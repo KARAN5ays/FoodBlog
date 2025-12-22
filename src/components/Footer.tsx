@@ -41,6 +41,9 @@ const Footer = () => {
                         <p className="text-xs opacity-60 mt-8">
                             &copy; {new Date().getFullYear()} Aerawat Engineering. All rights reserved.
                         </p>
+                        <p className="text-[10px] opacity-40 mt-2">
+                            Last updated: {new Date().toLocaleTimeString()}
+                        </p>
                     </div>
                 </div>
             </div>

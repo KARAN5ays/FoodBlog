@@ -26,7 +26,7 @@ export interface PostEdge {
 }
 
 const ALL_POSTS_QUERY = `
-  query GetAllPosts($host: String!, $after: String) {
+  query GetAllPosts($host: String!, $after: String) { # Force cache bust
     publication(host: $host) {
       title
       posts(first: 50, after: $after) {
@@ -101,8 +101,8 @@ export const getPosts = async () => {
           query: ALL_POSTS_QUERY,
           variables: { host: HASHNODE_DOMAIN, after: cursor },
         }),
-        // Use ISR with 120 seconds revalidation
-        next: { revalidate: 120 },
+        // Use ISR with 60 seconds revalidation (faster updates)
+        next: { revalidate: 60 },
       });
 
       if (!res.ok) return []; // Return empty array to avoid crashing build
