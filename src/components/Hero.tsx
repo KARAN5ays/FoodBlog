@@ -41,7 +41,7 @@ const Hero = () => {
                         <div className="absolute -inset-4 bg-blue-500/10 blur-3xl rounded-full group-hover:bg-blue-500/20 transition-all duration-700" />
                         <div className="relative z-10 w-full aspect-video rounded-2xl overflow-hidden border-4 border-slate-700/50 rotate-2 transition-transform duration-500 group-hover:rotate-0">
                             <Image
-                                src="https://img.lovepik.com/background/20211021/large/lovepik-modern-technology-wallpaper-background-image_500482213.jpg"
+                                src="/images/nasa-Q1p7bh3SHj8-unsplash.jpg"
                                 alt="Innovative Technology"
                                 fill
                                 priority
