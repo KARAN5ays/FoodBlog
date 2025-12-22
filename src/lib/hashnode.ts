@@ -117,9 +117,14 @@ export const getPosts = async () => {
       cursor = postsData.pageInfo?.endCursor || null;
     }
 
-    return allEdges
+    const posts = allEdges
       .filter(edge => edge?.node?.publishedAt)
       .sort((a, b) => new Date(b.node.publishedAt).getTime() - new Date(a.node.publishedAt).getTime());
+
+    console.log(`[Hashnode] Fetched ${posts.length} posts.`);
+    posts.forEach(p => console.log(`[Hashnode] Post: ${p.node.title}`));
+
+    return posts;
   } catch (error) {
     console.error("Error fetching posts:", error);
     return [];

@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 
 export default async function AllPosts() {
     const posts = await getPosts();
+    console.log(`[Page] AllPosts rendering with ${posts.length} posts.`);
 
     return (
         <div className="bg-muted/30 min-h-screen">
