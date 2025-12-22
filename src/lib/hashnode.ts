@@ -101,40 +101,30 @@ export const getPosts = async () => {
           query: ALL_POSTS_QUERY,
           variables: { host: HASHNODE_DOMAIN, after: cursor },
         }),
+        // Consistently use no-store to bypass Vercel Data Cache
         cache: 'no-store',
       });
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
+      if (!res.ok) return []; // Return empty array to avoid crashing build
 
-      const json = (await res.json()) as any;
-      const postsData = (json?.data?.data?.publication?.posts || json?.data?.publication?.posts) as any;
+      const json = await res.json();
+      const postsData = json?.data?.publication?.posts;
 
       if (!postsData) break;
 
-      const fetchedEdges = postsData.edges || [];
-      allEdges = allEdges.concat(fetchedEdges);
-
+      allEdges = allEdges.concat(postsData.edges || []);
       hasNextPage = postsData.pageInfo?.hasNextPage;
       cursor = postsData.pageInfo?.endCursor || null;
-
-      if (!hasNextPage) break;
     }
 
     return allEdges
-      .filter(edge => edge && edge.node && edge.node.publishedAt)
-      .sort(
-        (a, b) =>
-          new Date(b.node.publishedAt).getTime() -
-          new Date(a.node.publishedAt).getTime()
-      );
+      .filter(edge => edge?.node?.publishedAt)
+      .sort((a, b) => new Date(b.node.publishedAt).getTime() - new Date(a.node.publishedAt).getTime());
   } catch (error) {
     console.error("Error fetching posts:", error);
     return [];
   }
 };
-
 export const getPostBySlug = async (slug: string) => {
   try {
     const res: Response = await fetch(HASHNODE_API, {
