@@ -113,20 +113,9 @@ export const getPosts = async () => {
       const json = await res.json();
       const postsData = json?.data?.publication?.posts;
 
-      console.log(`[Hashnode] Configured Host: ${HASHNODE_DOMAIN}`);
-      if (postsData && postsData.totalDocuments !== undefined) {
-        console.log(`[Hashnode] API reports totalDocuments: ${postsData.totalDocuments}`);
-      }
+      if (!postsData) break;
 
-      if (!postsData) {
-        console.log("No postsData found in response.");
-        break;
-      }
-
-      const edges = postsData.edges || [];
-      console.log(`[Hashnode] Page fetched. Count: ${edges.length}, HasNext: ${postsData.pageInfo?.hasNextPage}, Cursor: ${postsData.pageInfo?.endCursor}`);
-
-      allEdges = allEdges.concat(edges);
+      allEdges = allEdges.concat(postsData.edges || []);
       hasNextPage = postsData.pageInfo?.hasNextPage;
       cursor = postsData.pageInfo?.endCursor || null;
     }
@@ -134,9 +123,6 @@ export const getPosts = async () => {
     const posts = allEdges
       .filter(edge => edge?.node?.publishedAt)
       .sort((a, b) => new Date(b.node.publishedAt).getTime() - new Date(a.node.publishedAt).getTime());
-
-    console.log(`[Hashnode] Fetched ${posts.length} posts.`);
-    posts.forEach(p => console.log(`[Hashnode] Post: ${p.node.title}`));
 
     return posts;
   } catch (error) {
