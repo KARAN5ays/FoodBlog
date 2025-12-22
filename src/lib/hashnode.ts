@@ -101,8 +101,8 @@ export const getPosts = async () => {
           query: ALL_POSTS_QUERY,
           variables: { host: HASHNODE_DOMAIN, after: cursor },
         }),
-        // Consistently use no-store to bypass Vercel Data Cache
-        cache: 'no-store',
+        // Use ISR with 120 seconds revalidation
+        next: { revalidate: 120 },
       });
 
       if (!res.ok) return []; // Return empty array to avoid crashing build
