@@ -110,6 +110,11 @@ export const getPosts = async () => {
       const json = await res.json();
       const postsData = json?.data?.publication?.posts;
 
+      console.log(`[Hashnode] Configured Host: ${HASHNODE_DOMAIN}`);
+      if (postsData && postsData.totalDocuments !== undefined) {
+        console.log(`[Hashnode] API reports totalDocuments: ${postsData.totalDocuments}`);
+      }
+
       if (!postsData) {
         console.log("No postsData found in response.");
         break;
