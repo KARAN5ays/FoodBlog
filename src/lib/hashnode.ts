@@ -92,7 +92,7 @@ export const getPosts = async () => {
     let cursor: string | null = null;
 
     while (hasNextPage) {
-      const res: Response = await fetch(`${HASHNODE_API}?v=${Date.now()}`, {
+      const res: Response = await fetch(HASHNODE_API, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
