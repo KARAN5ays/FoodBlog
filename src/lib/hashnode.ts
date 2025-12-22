@@ -92,7 +92,7 @@ export const getPosts = async () => {
     let cursor: string | null = null;
 
     while (hasNextPage) {
-      const res: Response = await fetch(HASHNODE_API, {
+      const res: Response = await fetch(`${HASHNODE_API}?v=${Date.now()}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +102,6 @@ export const getPosts = async () => {
           variables: { host: HASHNODE_DOMAIN, after: cursor },
         }),
         cache: 'no-store',
-        // Cache for 1 hour
       });
 
       if (!res.ok) {
