@@ -101,7 +101,7 @@ export const getPosts = async () => {
           query: ALL_POSTS_QUERY,
           variables: { host: HASHNODE_DOMAIN, after: cursor },
         }),
-        next: { revalidate: 60 },
+        next: { revalidate: 0 },
         // Cache for 1 hour
       });
 
@@ -147,7 +147,7 @@ export const getPostBySlug = async (slug: string) => {
         query: SINGLE_POST_QUERY,
         variables: { host: HASHNODE_DOMAIN, slug },
       }),
-      next: { revalidate: 3600 },
+      next: { revalidate: 0 },
     });
 
     if (!res.ok) {
