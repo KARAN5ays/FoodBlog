@@ -37,7 +37,7 @@ export default async function PostDetail({
 }) {
     const { slug } = await params;
     const post = await getPostBySlug(slug);
-    const posts = await getPosts();
+    const { edges: posts } = await getPosts(10);
 
     if (!post) {
         notFound();

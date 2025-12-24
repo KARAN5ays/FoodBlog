@@ -68,16 +68,31 @@ export interface HashnodePublication {
   };
 }
 
+export interface HashnodeSeries {
+  id: string;
+  name: string;
+  slug: string;
+  description?: {
+    markdown?: string;
+    html?: string;
+  };
+  coverImage?: string;
+  posts?: {
+    edges: PostEdge[];
+  };
+}
+
+
 export interface PostEdge {
   node: HashnodePost;
 }
 
 const ALL_POSTS_QUERY = `
-  query GetAllPosts($host: String!, $after: String) {
+  query GetAllPosts($host: String!, $first: Int!, $after: String) {
     publication(host: $host) {
       id
       title
-      posts(first: 50, after: $after) {
+      posts(first: $first, after: $after) {
         totalDocuments
         pageInfo {
           hasNextPage
@@ -117,78 +132,88 @@ const SINGLE_POST_QUERY = `
       post(slug: $slug) {
         id
         title
+        subtitle
         slug
         brief
         publishedAt
+        updatedAt
         coverImage {
           url
         }
         author {
           id
           name
+          username
           profilePicture
         }
         tags {
           id
           name
+          slug
         }
         content {
           html
           markdown
         }
+        readTimeInMinutes
       }
     }
   }
 `;
 
-export const getPosts = async () => {
+export const getPosts = async (first: number = 10, after?: string): Promise<{ edges: PostEdge[], pageInfo: any }> => {
   try {
-    let allEdges: PostEdge[] = [];
-    let hasNextPage = true;
-    let cursor: string | null = null;
+    const res = await fetch(HASHNODE_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: ALL_POSTS_QUERY,
+        variables: {
+          host: HASHNODE_DOMAIN,
+          first: first,
+          after: after
+        }
+      }),
+      next: { revalidate: 60 }
+    });
 
-    while (hasNextPage) {
-      const res: Response = await fetch(HASHNODE_API, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: ALL_POSTS_QUERY,
-          variables: {
-            host: HASHNODE_DOMAIN,
-            after: cursor,
-          },
-        }),
-        // Use ISR with 60 seconds revalidation (faster updates)
-        next: { revalidate: 60 },
-      });
-
-      if (!res.ok) return []; // Return empty array to avoid crashing build
-
-      const json = await res.json();
-      const postsData = json?.data?.publication?.posts;
-
-      if (!postsData) break;
-
-      allEdges = allEdges.concat(postsData.edges || []);
-      hasNextPage = postsData.pageInfo?.hasNextPage;
-      cursor = postsData.pageInfo?.endCursor || null;
+    if (!res.ok) {
+      console.error(`HTTP error! status: ${res.status}`);
+      return { edges: [], pageInfo: {} };
     }
 
-    const posts = allEdges
+    const json = await res.json();
+
+    if (json.errors) {
+      console.error('GraphQL errors in getPosts:', {
+        errors: json.errors.map((err: any) => ({
+          message: err.message,
+          path: err.path,
+        })),
+        query: 'POSTS_QUERY'
+      });
+      return { edges: [], pageInfo: {} };
+    }
+
+    const postsData = json?.data?.publication?.posts;
+    const edges: PostEdge[] = postsData?.edges || [];
+    const pageInfo = postsData?.pageInfo || {};
+
+    const sortedEdges = edges
       .filter(edge => edge?.node?.publishedAt)
       .sort((a, b) => new Date(b.node.publishedAt).getTime() - new Date(a.node.publishedAt).getTime());
 
-    return posts;
+    return { edges: sortedEdges, pageInfo };
+
   } catch (error) {
     console.error("Error fetching posts:", error);
-    return [];
+    return { edges: [], pageInfo: {} };
   }
 };
 
 export const getPublication = async (): Promise<HashnodePublication | null> => {
   try {
+    console.log(`[Hashnode] Fetching publication for host: ${HASHNODE_DOMAIN}`);
     const PUBLICATION_QUERY = `
       query GetPublication($host: String!) {
         publication(host: $host) {
@@ -196,7 +221,6 @@ export const getPublication = async (): Promise<HashnodePublication | null> => {
           title
           displayTitle
           descriptionSEO
-          totalDocuments
           preferences {
             logo
             navbarItems {
@@ -228,7 +252,6 @@ export const getPublication = async (): Promise<HashnodePublication | null> => {
             profilePicture
             username
             bio {
-              markdown
               html
             }
           }
@@ -236,27 +259,41 @@ export const getPublication = async (): Promise<HashnodePublication | null> => {
       }
     `;
 
-    const res: Response = await fetch(HASHNODE_API, {
+    const res = await fetch(HASHNODE_API, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         query: PUBLICATION_QUERY,
         variables: { host: HASHNODE_DOMAIN },
       }),
-      next: { revalidate: 300 }, // Cache for 5 minutes
+      next: { revalidate: 0 }, // Disable cache for dev
     });
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error(`[Hashnode] API Error: ${res.status} ${res.statusText}`);
+      return null;
+    }
 
     const json = await res.json();
+    if (json.errors) {
+      console.error('GraphQL errors in getPublication:', {
+        errors: json.errors.map((err: any) => ({
+          message: err.message,
+          path: err.path,
+          extensions: err.extensions
+        })),
+        query: 'PUBLICATION_QUERY'
+      });
+      return null;
+    }
+
     return json?.data?.publication as HashnodePublication | null;
   } catch (error) {
-    console.error("Error fetching publication:", error);
+    console.error("[Hashnode] Exception fetching publication:", error);
     return null;
   }
 };
+
 export const getPostBySlug = async (slug: string) => {
   try {
     const res: Response = await fetch(HASHNODE_API, {
@@ -268,17 +305,143 @@ export const getPostBySlug = async (slug: string) => {
         query: SINGLE_POST_QUERY,
         variables: { host: HASHNODE_DOMAIN, slug },
       }),
-      next: { revalidate: 0 },
+      next: { revalidate: 60 },
+    });
+
+    if (!res.ok) return null;
+
+    const json = await res.json();
+    return json?.data?.publication?.post || null;
+  } catch (error) {
+    console.error(`Error fetching post ${slug}:`, error);
+    return null;
+  }
+};
+
+export const getSeries = async (slug: string): Promise<HashnodeSeries | null> => {
+  // Validate input
+  if (!slug || typeof slug !== 'string' || slug.trim() === '') {
+    console.error('Invalid slug provided to getSeries:', { slug, type: typeof slug });
+    return null;
+  }
+
+  const cleanSlug = slug.trim();
+  console.log('Fetching series with slug:', cleanSlug);
+
+  try {
+    const SERIES_QUERY = `
+      query GetSeries($host: String!, $slug: String!) {
+        publication(host: $host) {
+          id
+          series(slug: $slug) {
+            id
+            name
+            slug
+            description {
+              markdown
+              html
+            }
+            coverImage
+            posts(first: 20) {
+              edges {
+                node {
+                  id
+                  title
+                  slug
+                  brief
+                  publishedAt
+                  coverImage {
+                    url
+                  }
+                  author {
+                    id
+                    name
+                    profilePicture
+                  }
+                  tags {
+                    id
+                    name
+                  }
+                  readTimeInMinutes
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const res = await fetch(HASHNODE_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: SERIES_QUERY,
+        variables: { host: HASHNODE_DOMAIN, slug: cleanSlug }
+      }),
+      next: { revalidate: 300 }
     });
 
     if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
+      console.error('HTTP error in getSeries:', {
+        status: res.status,
+        statusText: res.statusText,
+        slug: cleanSlug
+      });
+      return null;
     }
 
-    const json = (await res.json()) as any;
-    return (json?.data?.data?.publication?.post || json?.data?.publication?.post) as HashnodePost | null;
+    const json = await res.json();
+
+    if (json.errors) {
+      // Debug the raw error structure
+      console.error('Raw GraphQL errors in getSeries:', {
+        rawErrors: json.errors,
+        errorsType: typeof json.errors,
+        errorsLength: Array.isArray(json.errors) ? json.errors.length : 'not array',
+        slug: cleanSlug
+      });
+
+      // Safely extract error details
+      let errorDetails;
+      try {
+        if (Array.isArray(json.errors)) {
+          errorDetails = json.errors.map((err: any) => ({
+            message: err.message || 'No message',
+            path: err.path || null,
+            extensions: err.extensions || null
+          }));
+        } else {
+          errorDetails = [{ message: 'Unexpected error format', rawError: json.errors }];
+        }
+      } catch (mapError) {
+        errorDetails = [{ message: 'Error processing GraphQL errors', mapError: String(mapError) }];
+      }
+
+      console.error('GraphQL errors in getSeries:', {
+        slug: cleanSlug,
+        errorCount: errorDetails.length,
+        query: 'SERIES_QUERY'
+      });
+
+      return null;
+    }
+
+    // Check if series was found
+    if (!json.data?.publication?.series) {
+      console.log('Series not found:', {
+        slug: cleanSlug,
+        hasPublication: !!json.data?.publication,
+        hasSeriesField: 'series' in (json.data?.publication || {})
+      });
+      return null;
+    }
+
+    return json.data?.publication?.series || null;
   } catch (error) {
-    console.error(`Error fetching post ${slug}:`, error);
+    console.error('Error fetching series:', {
+      error: error instanceof Error ? error.message : String(error),
+      slug: cleanSlug || slug
+    });
     return null;
   }
 };

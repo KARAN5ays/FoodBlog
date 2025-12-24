@@ -7,6 +7,8 @@ import SearchBar from './SearchBar';
 import { useTheme } from '@/context/ThemeContext';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { PostEdge, HashnodePublication } from '@/lib/hashnode';
+import { getRelativePath } from '@/lib/utils';
+import { HASHNODE_DOMAIN } from '@/lib/config';
 
 interface NavbarProps {
     posts: PostEdge[];
@@ -28,11 +30,7 @@ const Navbar = ({ posts, publication }: NavbarProps) => {
     const [mounted, setMounted] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
-    const hasAbout = publication?.preferences?.navbarItems?.some((item: any) =>
-        item.label?.toLowerCase() === 'about' ||
-        item.label?.toLowerCase() === 'about us' ||
-        item.page?.slug === 'about'
-    );
+
 
     useEffect(() => {
         setMounted(true);
@@ -48,19 +46,28 @@ const Navbar = ({ posts, publication }: NavbarProps) => {
     };
 
     const navLinks: NavLink[] = [
-        { label: 'Explore', href: '/posts', prominent: false },
         { label: 'Home', href: '/', prominent: false },
-        ...(publication?.preferences?.navbarItems?.map((item, index) => ({
-            label: item.label || (item.type === 'series' ? item.series?.name : item.page?.title) || item.type,
-            href: item.type === 'series' ? `/series/${item.series?.slug}` : item.type === 'page' ? `/pages/${item.page?.slug}` : '#',
-            prominent: false,
-            key: `navbar-${item.type}-${item.series?.slug || item.page?.slug || index}`
-        })) || []),
+        { label: 'Projects', href: '/projects', prominent: false },
+        { label: 'Explore', href: '/posts', prominent: false },
+        ...(publication?.preferences?.navbarItems?.map((item, index) => {
+            const normalizedHref = item.url
+                ? getRelativePath(item.url, HASHNODE_DOMAIN)
+                : (item.type === 'series' ? `/series/${item.series?.slug}` : item.type === 'page' ? `/pages/${item.page?.slug}` : '#');
+
+            return {
+                label: item.label || (item.type === 'series' ? item.series?.name : item.page?.title) || item.type,
+                href: normalizedHref,
+                prominent: false,
+                key: `navbar-${item.type}-${item.series?.slug || item.page?.slug || index}`
+            };
+        }) || []),
     ];
 
     const isActive = (href: string) => {
-        if (href === '/') return pathname === '/';
-        return pathname.startsWith(href);
+        if (!href || href === '#') return false;
+        const normalizedHref = getRelativePath(href, HASHNODE_DOMAIN);
+        if (normalizedHref === '/') return pathname === '/';
+        return pathname.startsWith(normalizedHref);
     };
 
     return (
@@ -104,39 +111,35 @@ const Navbar = ({ posts, publication }: NavbarProps) => {
                         <div className="flex items-center gap-1">
                             {/* Dynamic Hashnode Nav Items */}
                             {(publication?.preferences?.navbarItems || []).length > 0 ? (
-                                publication?.preferences?.navbarItems?.map((item, index) => (
-                                    <Link
-                                        key={`navbar-${item.type}-${index}`}
-                                        href={item.url || (item.type === 'series' ? `/series/${item.series?.slug}` : item.type === 'page' ? `/pages/${item.page?.slug}` : '#')}
-                                        target={item.type === 'link' ? '_blank' : undefined}
-                                        className={`relative px-4 py-2 text-sm font-bold rounded-full transition-all duration-300 ${isActive(item.url || '')
-                                            ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/10'
-                                            : 'text-text-secondary hover:text-foreground hover:bg-muted/50'
-                                            }`}
-                                    >
-                                        {item.label}
-                                    </Link>
-                                ))
+                                publication?.preferences?.navbarItems?.map((item, index) => {
+                                    const href = item.url
+                                        ? getRelativePath(item.url, HASHNODE_DOMAIN)
+                                        : (item.type === 'series' ? `/series/${item.series?.slug}` : item.type === 'page' ? `/pages/${item.page?.slug}` : '#');
+
+                                    return (
+                                        <Link
+                                            key={`navbar-${item.type}-${index}`}
+                                            href={href}
+                                            target={item.type === 'link' && !item.url?.includes(HASHNODE_DOMAIN) ? '_blank' : undefined}
+                                            className={`relative px-4 py-2 text-sm font-bold rounded-full transition-all duration-300 ${isActive(href)
+                                                ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/10'
+                                                : 'text-text-secondary hover:text-foreground hover:bg-muted/50'
+                                                }`}
+                                        >
+                                            {item.label}
+                                        </Link>
+                                    );
+                                })
                             ) : (
                                 // Fallback if no Hashnode items defined
                                 <>
                                     <Link href="/" className="px-4 py-2 text-sm font-bold text-text-secondary hover:text-foreground">Home</Link>
+                                    <Link href="/projects" className="px-4 py-2 text-sm font-bold text-text-secondary hover:text-foreground">Projects</Link>
                                     <Link href="/posts" className="px-4 py-2 text-sm font-bold text-text-secondary hover:text-foreground">Explore</Link>
                                 </>
                             )}
 
-                            {/* Manual About Link if missing from Hashnode */}
-                            {!hasAbout && (
-                                <Link
-                                    href="/about"
-                                    className={`relative px-4 py-2 text-sm font-bold rounded-full transition-all duration-300 ${isActive('/about')
-                                        ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/10'
-                                        : 'text-text-secondary hover:text-foreground hover:bg-muted/50'
-                                        }`}
-                                >
-                                    About
-                                </Link>
-                            )}
+
                         </div>
 
                         <div className="flex items-center gap-3 pl-4 border-l border-border-custom">

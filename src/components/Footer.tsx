@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Github, Twitter, Linkedin, Youtube, Instagram, Globe, Rss, FileText, Terminal, CheckCircle, Clock, TrendingUp } from 'lucide-react';
 import { HashnodePublication } from '@/lib/hashnode';
@@ -10,8 +10,13 @@ interface FooterProps {
 }
 
 const Footer = ({ publication }: FooterProps) => {
+  const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,7 +150,7 @@ const Footer = ({ publication }: FooterProps) => {
             <p className="text-sm text-text-secondary mb-4">
               Get the latest updates directly in your inbox.
             </p>
-            <form onSubmit={handleSubscribe} className="space-y-3 max-w-md">
+            <form onSubmit={handleSubscribe} className="space-y-3 max-w-md" suppressHydrationWarning>
               <div className="relative">
                 <input
                   type="email"
@@ -154,11 +159,13 @@ const Footer = ({ publication }: FooterProps) => {
                   placeholder="name@example.com"
                   className="w-full px-4 py-3 border border-border-custom rounded-xl bg-surface/50 backdrop-blur-sm focus:bg-surface text-foreground placeholder-text-secondary outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium text-sm"
                   required
+                  suppressHydrationWarning
                 />
               </div>
               <button
                 type="submit"
                 className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 active:scale-[0.98] transition-all text-sm"
+                suppressHydrationWarning
               >
                 {isSubscribed ? 'Subscribed!' : 'Subscribe Free'}
               </button>
@@ -178,7 +185,7 @@ const Footer = ({ publication }: FooterProps) => {
                 {publication?.displayTitle || publication?.title || 'Blog'}
               </span>
               <span className="text-text-secondary mx-2">|</span>
-              <span className="text-sm text-text-secondary">© {currentYear}</span>
+              <span className="text-sm text-text-secondary" suppressHydrationWarning>© {mounted ? currentYear : ''}</span>
             </div>
 
             <div className="flex gap-8 text-sm font-medium">

@@ -1,0 +1,20 @@
+{
+  "data": {
+    "publication": {
+      "id": "693fc14aceebba805500fe95",
+      "series": {
+        "id": "694a12bfe59377f3539659bf",
+        "name": "IT and Technology Blog",
+        "slug": "it-blogs",
+        "description": {
+          "markdown": "In This Series I will Give Some Description About the Things related in IT",
+          "html": "In This Series I will Give Some Description About the Things related in IT\n"
+        },
+        "coverImage": null,
+        "posts": {
+          "edges": []
+        }
+      }
+    }
+  }
+}

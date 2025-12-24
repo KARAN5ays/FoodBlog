@@ -6,8 +6,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getPosts, getPublication } from '@/lib/hashnode';
 import { Metadata } from 'next';
-import { ChevronLeft, Calendar, Clock, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ArrowRight } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
+import ArticleCard from '@/components/ArticleCard';
 
 export async function generateMetadata(): Promise<Metadata> {
     const publication = await getPublication();
@@ -18,8 +19,16 @@ export async function generateMetadata(): Promise<Metadata> {
     };
 }
 
-export default async function AllPosts() {
-    const posts = await getPosts();
+export default async function AllPosts({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+    const params = await searchParams;
+    const afterCursor = typeof params.after === 'string' ? params.after : undefined;
+
+    // Fetch 12 posts per page (matches grid layout 3x4)
+    const { edges: posts, pageInfo } = await getPosts(12, afterCursor);
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -31,7 +40,7 @@ export default async function AllPosts() {
                             All Articles
                         </h1>
                         <p className="text-gray-600 dark:text-gray-400 max-w-xl">
-                            Explore our complete collection of {posts.length} technology articles and programming tutorials.
+                            Explore our complete collection of technology articles and programming tutorials.
                         </p>
                     </div>
                     <Link
@@ -45,84 +54,45 @@ export default async function AllPosts() {
 
                 {posts.length === 0 ? (
                     <div className="text-center py-20 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                        <p className="text-gray-600 dark:text-gray-400 font-medium">Loading articles...</p>
+                        <div className="p-8">
+                            <p className="text-gray-600 dark:text-gray-400 font-medium text-lg mb-4">No articles found.</p>
+                            <Link href="/posts" className="text-blue-600 hover:text-blue-700 font-bold">Return to First Page</Link>
+                        </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {posts.map((edge) => {
-                            const post = edge.node;
-                            const readTime = Math.ceil((post.content?.html?.length || 0) / 1000);
-                            const isRemoteImage = post.coverImage?.url?.startsWith('http');
+                    <div className="space-y-12">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {posts.map((edge, index) => (
+                                <ArticleCard
+                                    key={edge.node?.slug || index}
+                                    post={edge.node}
+                                    formatDate={formatDate}
+                                />
+                            ))}
+                        </div>
 
-                            return (
+                        {/* Pagination Controls */}
+                        <div className="flex justify-center items-center gap-4 pt-8 border-t border-gray-200 dark:border-gray-800">
+                            {afterCursor && (
                                 <Link
-                                    key={post.slug}
-                                    href={`/posts/${post.slug}`}
-                                    className="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                                    href="/posts"
+                                    className="flex items-center gap-2 px-6 py-3 rounded-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
                                 >
-                                    {/* Cover Image */}
-                                    <div className="aspect-video relative overflow-hidden">
-                                        {post.coverImage?.url ? (
-                                            <Image
-                                                src={post.coverImage.url}
-                                                alt={post.title}
-                                                fill
-                                                unoptimized={isRemoteImage}
-                                                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                                                <div className="text-white text-6xl font-bold">
-                                                    {post.title.charAt(0)}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="p-6">
-                                        {/* Category/Tag */}
-                                        {post.tags?.[0] && (
-                                            <div className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full text-xs font-medium mb-3">
-                                                {post.tags[0].name}
-                                            </div>
-                                        )}
-
-                                        {/* Title */}
-                                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                            {post.title}
-                                        </h3>
-
-                                        {/* Description */}
-                                        {post.brief && (
-                                            <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
-                                                {post.brief}
-                                            </p>
-                                        )}
-
-                                        {/* Meta Info */}
-                                        <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                                            <div className="flex items-center gap-1">
-                                                <Calendar size={14} />
-                                                {formatDate(post.publishedAt)}
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <Clock size={14} />
-                                                {readTime} min read
-                                            </div>
-                                        </div>
-
-                                        {/* Read More */}
-                                        <div className="flex items-center gap-2 mt-4 text-blue-600 dark:text-blue-400 font-medium group-hover:gap-3 transition-all">
-                                            <span>Read More</span>
-                                            <ArrowRight size={16} />
-                                        </div>
-                                    </div>
+                                    <ChevronLeft size={18} />
+                                    First Page
                                 </Link>
-                            );
-                        })}
+                            )}
+
+                            {pageInfo.hasNextPage && pageInfo.endCursor && (
+                                <Link
+                                    href={`/posts?after=${pageInfo.endCursor}`}
+                                    className="flex items-center gap-2 px-6 py-3 rounded-full bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/25 transition-all"
+                                >
+                                    Next Page
+                                    <ArrowRight size={18} />
+                                </Link>
+                            )}
+                        </div>
                     </div>
                 )}
             </div>

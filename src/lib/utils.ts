@@ -22,3 +22,18 @@ export const formatDate = (dateString: string): string => {
         day: 'numeric'
     });
 };
+
+export const getRelativePath = (url: string, domain: string): string => {
+    if (!url) return '#';
+    if (!url.startsWith('http')) return url;
+
+    try {
+        const urlObj = new URL(url);
+        if (urlObj.hostname === domain || urlObj.hostname.replace('www.', '') === domain.replace('www.', '')) {
+            return urlObj.pathname + urlObj.search + urlObj.hash;
+        }
+    } catch (e) {
+        console.error('Error parsing URL:', url, e);
+    }
+    return url;
+};

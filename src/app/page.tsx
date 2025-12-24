@@ -24,10 +24,12 @@ export default async function Home({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const [posts, publication] = await Promise.all([
-    getPosts(),
+  const [postsData, publication] = await Promise.all([
+    getPosts(10), // Fetch initial posts for home
     getPublication()
   ]);
+
+  const posts = postsData.edges;
 
   const params = await searchParams;
   // const currentPage = parseInt(params.page as string) || 1;
@@ -38,12 +40,11 @@ export default async function Home({
 
   // Calculate stats from real Hashnode data
   const totalArticles = posts.length;
-  const totalViews = publication?.totalDocuments || posts.length; // Use totalDocuments or fallback to post count
   const totalLikes = posts.reduce((acc, post) => acc + (post.node?.reactions?.total || 0), 0);
   const avgReadTime = posts.length > 0
     ? Math.round(posts.reduce((acc, post) => acc + (post.node?.readTimeInMinutes || 0), 0) / posts.length)
     : 0;
-  const engagement = posts.length > 0 && totalViews > 0 ? Math.round((totalLikes / totalViews) * 100) : 0;
+  const engagement = 0; // Hashnode API v1 doesn't provide view count, so we can't calculate engagement accurately
 
   return (
     <>
@@ -72,10 +73,8 @@ export default async function Home({
           <LiveStats
             stats={[
               { label: 'Articles', value: totalArticles.toString(), prefix: '', suffix: '+' },
-              { label: 'Total Views', value: totalViews.toString(), prefix: '', suffix: 'K' },
               { label: 'Total Likes', value: totalLikes.toString(), prefix: '', suffix: '+' },
               { label: 'Avg Read Time', value: avgReadTime.toString(), prefix: '', suffix: ' min' },
-              { label: 'Engagement', value: engagement.toString(), prefix: '', suffix: '%' },
             ]}
           />
         </div>

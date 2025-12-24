@@ -67,9 +67,10 @@ const ArticleGrid = ({ posts, publication }: ArticleGridProps) => {
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => handleCategorySelect(null)}
-              className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 ${selectedCategory === null
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
-                : 'bg-white dark:bg-slate-800 text-text-secondary hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-foreground border border-border-custom'
+              suppressHydrationWarning
+              className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${selectedCategory === null
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25 ring-2 ring-blue-600 ring-offset-2 ring-offset-background'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-foreground border border-transparent'
                 }`}
             >
               All Articles
@@ -78,9 +79,10 @@ const ArticleGrid = ({ posts, publication }: ArticleGridProps) => {
               <button
                 key={cat}
                 onClick={() => handleCategorySelect(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 ${selectedCategory === cat
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
-                  : 'bg-white dark:bg-slate-800 text-text-secondary hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-foreground border border-border-custom'
+                suppressHydrationWarning
+                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${selectedCategory === cat
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25 ring-2 ring-blue-600 ring-offset-2 ring-offset-background'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-foreground border border-transparent'
                   }`}
               >
                 {cat}
@@ -88,7 +90,8 @@ const ArticleGrid = ({ posts, publication }: ArticleGridProps) => {
             ))}
             {categories.length > 8 && (
               <button
-                className="px-4 py-2 rounded-full text-sm font-bold bg-muted text-text-secondary hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors border border-border-custom"
+                suppressHydrationWarning
+                className="px-5 py-2.5 rounded-full text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-transparent"
               >
                 +{categories.length - 8} more
               </button>
@@ -103,6 +106,7 @@ const ArticleGrid = ({ posts, publication }: ArticleGridProps) => {
           <p className="text-text-secondary font-medium">No articles found in this category.</p>
           <button
             onClick={() => handleCategorySelect(null)}
+            suppressHydrationWarning
             className="mt-4 px-6 py-2 bg-blue-50 dark:bg-blue-900/10 text-blue-600 dark:text-blue-400 font-bold rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors"
           >
             Clear Filter
@@ -125,6 +129,7 @@ const ArticleGrid = ({ posts, publication }: ArticleGridProps) => {
             <div className="flex justify-center pt-8">
               <button
                 onClick={handleLoadMore}
+                suppressHydrationWarning
                 className="px-8 py-3 bg-white dark:bg-slate-800 border border-border-custom hover:border-blue-500 text-foreground font-bold rounded-full shadow-sm hover:shadow-md transition-all active:scale-95"
               >
                 Load More Articles

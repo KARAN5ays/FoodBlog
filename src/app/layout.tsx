@@ -41,10 +41,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [posts, publication] = await Promise.all([
-    getPosts(),
+  const [postsData, publication] = await Promise.all([
+    getPosts(10),
     getPublication()
   ]);
+
+  const posts = postsData.edges;
 
   return (
     <html lang="en" suppressHydrationWarning>
