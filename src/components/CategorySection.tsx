@@ -48,42 +48,50 @@ const CategorySection = ({ posts }: CategorySectionProps) => {
     }, [posts, selectedCategory]);
 
     return (
-        <section className="py-20 bg-muted/30">
-            <div className="container mx-auto px-4">
+        <section className="py-12">
+            <div className="w-full">
                 {/* Section Header */}
-                <div className="text-center mb-12">
-                    <h2 className="text-4xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                        Explore Our Articles
+                <div className="mb-10">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-3 text-gray-900 dark:text-white">
+                        Explore Articles
                     </h2>
-                    <p className="text-text-secondary max-w-xl mx-auto">
-                        Discover technology articles, programming tutorials, and engineering insights from our latest publications.
+                    <p className="text-gray-600 dark:text-gray-400 mb-8">
+                        Discover technology articles, programming tutorials, and engineering insights.
                     </p>
                 </div>
 
                 {/* Category Pills */}
                 <div className="mb-12">
-                    <div className="flex flex-wrap gap-3 justify-center">
-                        {Array.from(categories.entries()).map(([key, config]) => {
+                    <h3 className="text-sm font-bold text-text-secondary uppercase tracking-wider mb-4">Filter by Category</h3>
+                    <div className="flex flex-wrap gap-2">
+                        {Array.from(categories.entries()).slice(0, 9).map(([key, config]) => {
                             const isSelected = selectedCategory === key;
                             return (
                                 <button
                                     key={key}
                                     onClick={() => setSelectedCategory(key)}
                                     suppressHydrationWarning={true}
-                                    className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 border ${isSelected
-                                        ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105'
-                                        : 'bg-surface border-border-custom text-text-secondary hover:border-blue-500/50 hover:-translate-y-0.5 shadow-sm'
+                                    className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 border backdrop-blur-md ${isSelected
+                                        ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/25 scale-105'
+                                        : 'bg-white/50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 hover:border-blue-500 hover:text-blue-600 hover:shadow-md'
                                         }`}
                                 >
                                     {config.displayName}
                                 </button>
                             );
                         })}
+                        {categories.size > 9 && (
+                            <button
+                                className="px-5 py-2.5 rounded-xl text-sm font-bold bg-muted text-text-secondary hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors border border-border-custom"
+                            >
+                                +{categories.size - 9} more
+                            </button>
+                        )}
                     </div>
                 </div>
 
                 {/* Posts Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {filteredPosts.length > 0 ? (
                         filteredPosts.map((edge, index) => {
                             if (!edge || !edge.node) return null;
@@ -103,8 +111,8 @@ const CategorySection = ({ posts }: CategorySectionProps) => {
                         })
                     ) : (
                         <div className="col-span-full text-center py-20">
-                            <h4 className="text-xl font-bold text-text-secondary mb-2">No articles found in this category</h4>
-                            <p className="text-text-secondary">Try selecting a different category or search for something else.</p>
+                            <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No articles found in this category</h4>
+                            <p className="text-gray-600 dark:text-gray-400">Try selecting a different category or search for something else.</p>
                         </div>
                     )}
                 </div>

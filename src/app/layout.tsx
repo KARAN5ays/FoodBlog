@@ -5,45 +5,57 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
-import { getPosts } from "@/lib/hashnode";
+import { getPosts, getPublication } from "@/lib/hashnode";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Aerawat Engineering - Technology and Programming Blog",
-  description: "Discover cutting-edge technology articles, programming tutorials, and engineering insights.",
-  openGraph: {
-    title: "Aerawat Engineering - Technology and Programming Blog",
-    description: "Discover cutting-edge technology articles, programming tutorials, and engineering insights.",
-    url: "https://aerawat.com", // we will update this later
-    siteName: "Aerawat Engineering",
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Aerawat Engineering - Technology and Programming Blog",
-    description: "Discover cutting-edge technology articles, programming tutorials, and engineering insights.",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const publication = await getPublication();
+  const title = publication?.displayTitle || publication?.title || 'Tech Blog';
+  const description = publication?.descriptionSEO || 'Discover cutting-edge technology articles, programming tutorials, and engineering insights.';
+
+  return {
+    title: {
+      default: title,
+      template: `%s | ${title}`,
+    },
+    description: description,
+    openGraph: {
+      title: title,
+      description: description,
+      url: publication?.url || "https://hashnode.com",
+      siteName: title,
+      locale: "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: title,
+      description: description,
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const posts = await getPosts();
+  const [posts, publication] = await Promise.all([
+    getPosts(),
+    getPublication()
+  ]);
 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased min-h-screen flex flex-col`}>
         <ThemeProvider>
           <ReadingProgressBar />
-          <Navbar posts={posts} />
+          <Navbar posts={posts} publication={publication} />
           <main className="flex-grow">
             {children}
           </main>
-          <Footer />
+          <Footer publication={publication} />
         </ThemeProvider>
       </body>
     </html>

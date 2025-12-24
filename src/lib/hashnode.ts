@@ -19,6 +19,53 @@ export interface HashnodePost {
     html: string;
     markdown: string;
   };
+  reactions?: {
+    total: number;
+  };
+  readTimeInMinutes?: number;
+}
+
+export interface HashnodePublication {
+  id: string;
+  title: string;
+  displayTitle?: string;
+  descriptionSEO?: string;
+  totalDocuments?: number;
+  preferences?: {
+    logo?: string;
+    navbarItems?: Array<{
+      type: string;
+      label?: string;
+      series?: {
+        slug: string;
+        name?: string;
+      };
+      page?: {
+        slug: string;
+        title?: string;
+      };
+      url?: string;
+    }>;
+  };
+  links?: {
+    twitter?: string;
+    github?: string;
+    linkedin?: string;
+    youtube?: string;
+    instagram?: string;
+    website?: string;
+  };
+  url?: string;
+  favicon?: string;
+  author?: {
+    name: string;
+    profilePicture?: string;
+    username?: string;
+    bio?: {
+      markdown?: string;
+      html?: string;
+    }
+  };
 }
 
 export interface PostEdge {
@@ -55,6 +102,7 @@ const ALL_POSTS_QUERY = `
               id
               name
             }
+            readTimeInMinutes
           }
         }
       }
@@ -136,6 +184,77 @@ export const getPosts = async () => {
   } catch (error) {
     console.error("Error fetching posts:", error);
     return [];
+  }
+};
+
+export const getPublication = async (): Promise<HashnodePublication | null> => {
+  try {
+    const PUBLICATION_QUERY = `
+      query GetPublication($host: String!) {
+        publication(host: $host) {
+          id
+          title
+          displayTitle
+          descriptionSEO
+          totalDocuments
+          preferences {
+            logo
+            navbarItems {
+              type
+              label
+              url
+              series {
+                slug
+                name
+              }
+              page {
+                slug
+                title
+              }
+            }
+          }
+          links {
+            twitter
+            github
+            linkedin
+            youtube
+            instagram
+            website
+          }
+          url
+          favicon
+          author {
+            name
+            profilePicture
+            username
+            bio {
+              markdown
+              html
+            }
+          }
+        }
+      }
+    `;
+
+    const res: Response = await fetch(HASHNODE_API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: PUBLICATION_QUERY,
+        variables: { host: HASHNODE_DOMAIN },
+      }),
+      next: { revalidate: 300 }, // Cache for 5 minutes
+    });
+
+    if (!res.ok) return null;
+
+    const json = await res.json();
+    return json?.data?.publication as HashnodePublication | null;
+  } catch (error) {
+    console.error("Error fetching publication:", error);
+    return null;
   }
 };
 export const getPostBySlug = async (slug: string) => {
