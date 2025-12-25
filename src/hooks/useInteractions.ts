@@ -28,7 +28,9 @@ export const useInteractions = (postSlug: string) => {
             else setIsBookmarked(true);
         }
         localStorage.setItem(storageKey, JSON.stringify(newItems));
-        // TODO: If using Firebase Auth, also update the database here:
+
+        // Note: Firebase Auth integration for persistent storage across devices can be added here
+        // Example implementation (requires Firebase setup):
         // if (user) {
         //    updateDoc(doc(db, 'users', user.uid), { [type]: newItems });
         // }

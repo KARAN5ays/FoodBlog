@@ -13,6 +13,11 @@
   --background-image-dark: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.08), transparent 40%),
     radial-gradient(circle at 85% 85%, rgba(79, 70, 229, 0.08), transparent 40%),
     var(--bg-body);
+
+  --bg-grid-light: linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+    linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+  --bg-grid-dark: linear-gradient(to right, #1e293b 1px, transparent 1px),
+    linear-gradient(to bottom, #1e293b 1px, transparent 1px);
 }
 
 :root {
@@ -28,6 +33,9 @@
   --link: #2563eb;
 
   --font-inter: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --bg-grid-light: linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+    linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
 }
 
 [class~="dark"] {
@@ -44,6 +52,13 @@
   --text-secondary: #94a3b8;
   /* Slate 400 */
   --link: #60a5fa;
+
+  --bg-grid-dark: linear-gradient(to right, #1e293b 1px, transparent 1px),
+    linear-gradient(to bottom, #1e293b 1px, transparent 1px);
+
+  --background-image-dark: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.08), transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(79, 70, 229, 0.08), transparent 40%),
+    var(--bg-body);
 }
 
 body {

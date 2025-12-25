@@ -45,11 +45,15 @@ const Navbar = ({ posts, publication }: NavbarProps) => {
         router.push('/subscribe');
     };
 
-    const navLinks: NavLink[] = [
+    const allNavLinks: NavLink[] = [
         { label: 'Home', href: '/', prominent: false },
         { label: 'Projects', href: '/projects', prominent: false },
         { label: 'Explore', href: '/posts', prominent: false },
-        ...(publication?.preferences?.navbarItems?.map((item, index) => {
+        ...(publication?.preferences?.navbarItems?.filter(item => {
+            // Filter out specific items if needed
+            const label = (item.label || item.series?.name || item.page?.title || "").toLowerCase();
+            return !label.includes('it and technology') && !label.includes('learning paths'); // We have a custom section for paths now
+        }).map((item, index) => {
             const normalizedHref = item.url
                 ? getRelativePath(item.url, HASHNODE_DOMAIN)
                 : (item.type === 'series' ? `/series/${item.series?.slug}` : item.type === 'page' ? `/pages/${item.page?.slug}` : '#');
@@ -62,6 +66,16 @@ const Navbar = ({ posts, publication }: NavbarProps) => {
             };
         }) || []),
     ];
+
+    // Deduplicate links based on href
+    const navLinks = allNavLinks.reduce<NavLink[]>((acc, current) => {
+        const x = acc.find(item => item.href === current.href);
+        if (!x) {
+            return acc.concat([current]);
+        } else {
+            return acc;
+        }
+    }, []);
 
     const isActive = (href: string) => {
         if (!href || href === '#') return false;

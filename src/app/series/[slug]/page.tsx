@@ -57,20 +57,43 @@ export default async function Series({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-20">
-        <div className="absolute inset-0 bg-grid-white/10 bg-grid" />
+      {/* Hero Section with Cover Image */}
+      <div className="relative text-white py-20 overflow-hidden">
+        {/* Blurred Cover Image Background */}
+        {series.coverImage && (
+          <div className="absolute inset-0 z-0">
+            <Image
+              src={series.coverImage}
+              alt={series.name}
+              fill
+              className="object-cover blur-2xl scale-110"
+              unoptimized={series.coverImage.startsWith('http')}
+              priority
+            />
+            {/* Dark overlay for better text contrast */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-900/70 via-indigo-900/70 to-purple-900/70" />
+          </div>
+        )}
+
+        {/* Fallback gradient if no cover image */}
+        {!series.coverImage && (
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-700" />
+        )}
+
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 bg-grid-white/10 bg-grid z-0" />
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
               <span className="text-sm font-bold uppercase tracking-wider">Series</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
+            <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight drop-shadow-lg">
               {series.name}
             </h1>
             {series.description?.html && (
               <div
-                className="text-lg md:text-xl text-blue-100 leading-relaxed max-w-2xl mx-auto"
+                className="text-lg md:text-xl text-blue-100 leading-relaxed max-w-2xl mx-auto drop-shadow-md"
                 dangerouslySetInnerHTML={{ __html: series.description.html }}
               />
             )}

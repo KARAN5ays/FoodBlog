@@ -17,8 +17,8 @@ interface LiveStatsProps {
 
 const getIconForLabel = (label: string) => {
   const iconProps = { size: 32, className: "mb-3" };
-  
-  switch(label) {
+
+  switch (label) {
     case 'Articles':
       return <BookOpen {...iconProps} className="mb-3 text-blue-500" />;
     case 'Total Views':
@@ -39,14 +39,14 @@ const LiveStats = ({ stats }: LiveStatsProps) => {
 
   useEffect(() => {
     const newValues: Record<string, number> = {};
-    
+
     stats.forEach(stat => {
       const targetValue = parseInt(stat.value.replace(/[^0-9]/g, ''));
       const duration = stat.duration || 2000;
       const steps = 60;
       const increment = targetValue / steps;
       let current = 0;
-      
+
       const timer = setInterval(() => {
         current += increment;
         if (current >= targetValue) {
@@ -64,15 +64,15 @@ const LiveStats = ({ stats }: LiveStatsProps) => {
       {stats.map(stat => (
         <div
           key={stat.label}
-          className="bg-slate-700 dark:bg-slate-700 rounded-2xl p-6 border border-slate-600 dark:border-slate-600 shadow-lg text-center"
+          className="bg-surface rounded-2xl p-6 border border-border-custom shadow-sm hover:shadow-md transition-all text-center"
         >
           <div className="flex justify-center">
             {getIconForLabel(stat.label)}
           </div>
-          <div className="text-4xl font-bold mb-2 text-white">
+          <div className="text-4xl font-bold mb-2 text-slate-900 dark:text-white">
             {animatedValues[stat.label] || 0}{stat.suffix}
           </div>
-          <div className="text-sm text-slate-300">
+          <div className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
             {stat.label}
           </div>
         </div>

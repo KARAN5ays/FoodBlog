@@ -1,184 +1,172 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { HashnodePost, HashnodePublication } from '@/lib/hashnode';
-import { ArrowRight, Sparkles, Github, Twitter, Linkedin, Instagram, Youtube, Globe, Calendar, Clock } from 'lucide-react';
-import { formatDate } from '@/lib/utils';
+import { ArrowUpRight, Terminal, Clock, Calendar, Github, Twitter, Linkedin, Youtube, Instagram, Globe } from 'lucide-react';
+import { HashnodePublication, HashnodePost } from '@/lib/hashnode';
 
 interface HeroProps {
-    publication?: HashnodePublication | null;
-    featuredPost?: HashnodePost | null;
+    publication: HashnodePublication;
+    featuredPost?: HashnodePost;
 }
 
 const Hero = ({ publication, featuredPost }: HeroProps) => {
-    const title = publication?.displayTitle || publication?.title || 'Tech Blog';
-    const subtitle = publication?.descriptionSEO || 'Exploring technology, programming, and software engineering.';
-    const featuredImage = featuredPost?.coverImage?.url || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=2072';
-
-    const isRemoteImage = typeof featuredImage === 'string' && featuredImage.startsWith('http');
-
-    // Social Links Helper
-    const SocialIcon = ({ type, url }: { type: string, url?: string }) => {
-        if (!url) return null;
-        const iconProps = { size: 20 };
-        const icons: { [key: string]: React.ReactNode } = {
-            github: <Github {...iconProps} />,
-            twitter: <Twitter {...iconProps} />,
-            linkedin: <Linkedin {...iconProps} />,
-            instagram: <Instagram {...iconProps} />,
-            youtube: <Youtube {...iconProps} />,
-            website: <Globe {...iconProps} />
-        };
-
-        return (
-            <a
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 text-text-secondary hover:text-blue-600 dark:hover:text-blue-400 bg-white dark:bg-slate-800 border border-border-custom rounded-full hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md"
-            >
-                {icons[type] || <Globe {...iconProps} />}
-            </a>
-        );
-    };
+    const socialLinks = [
+        { icon: Github, url: publication.links?.github, label: 'GitHub' },
+        { icon: Twitter, url: publication.links?.twitter, label: 'Twitter' },
+        { icon: Linkedin, url: publication.links?.linkedin, label: 'LinkedIn' },
+        { icon: Youtube, url: publication.links?.youtube, label: 'YouTube' },
+        { icon: Instagram, url: publication.links?.instagram, label: 'Instagram' },
+        { icon: Globe, url: publication.links?.website, label: 'Website' },
+    ].filter(link => link.url);
 
     return (
-        <div className="relative overflow-hidden bg-background pt-12 pb-24 lg:pt-20 lg:pb-32">
-            {/* Ambient Background Effects */}
-            <div className="absolute top-0 inset-x-0 h-[600px] bg-gradient-to-b from-blue-50/40 to-transparent dark:from-blue-950/10 dark:to-transparent pointer-events-none" />
-            <div className="absolute right-0 top-0 -mt-20 -mr-20 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
-            <div className="absolute left-0 bottom-0 -mb-20 -ml-20 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none" />
+        <section
+            className="relative w-full overflow-hidden border-b border-border-custom"
+            style={{ backgroundColor: 'var(--bg-surface)' }}
+        >
 
-            <div className="container mx-auto px-4 relative z-10">
-                <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+            {/* Technical Grid Background */}
+            <div
+                className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
+                style={{
+                    backgroundImage: "var(--bg-grid-light)",
+                    backgroundSize: "40px 40px"
+                }}
+            />
+            <div
+                className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none hidden dark:block"
+                style={{
+                    backgroundImage: "var(--bg-grid-dark)",
+                    backgroundSize: "40px 40px"
+                }}
+            />
 
-                    {/* Left Content Area */}
-                    <div className="lg:w-1/2 flex flex-col gap-8 text-center lg:text-left">
+            <div className="relative z-10 container mx-auto px-4 py-24 md:py-32 max-w-7xl">
+                <div className="flex flex-col lg:flex-row items-start gap-16 lg:gap-24">
 
-                        {/* Badge */}
-                        {publication && (
-                            <div className="flex justify-center lg:justify-start">
-                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-widest shadow-sm">
-                                    <Sparkles size={12} className="text-blue-500 animate-pulse" />
-                                    <span>{publication.title}</span>
-                                </div>
-                            </div>
-                        )}
+                    {/* Left Column: Documentation/Dashboard Style */}
+                    <div className="flex-1 max-w-3xl">
+                        {/* Status Label */}
+                        <div className="inline-flex items-center gap-2 mb-8 font-mono text-xs font-bold tracking-wider text-[#0969da] uppercase">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0969da] opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0969da]"></span>
+                            </span>
+                            [ STATUS: ACTIVE ]
+                        </div>
 
-                        {/* Headings */}
-                        <div>
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-foreground tracking-tight leading-[1.1] mb-6">
-                                {title}
-                            </h1>
-                            <p className="text-xl md:text-2xl text-text-secondary font-medium leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                                {subtitle}
+                        {/* Main Title */}
+                        <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
+                            {publication.displayTitle || publication.title || "Engineering Blog"}
+                        </h1>
+
+                        {/* Subheading - Controlled Width */}
+                        <div className="max-w-2xl">
+                            <p className="text-lg md:text-xl text-text-secondary leading-relaxed mb-10">
+                                {publication.descriptionSEO || "Documenting the journey through software architecture, scaling systems, and modern web development."}
                             </p>
                         </div>
 
-                        {/* CTA & Socials */}
-                        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 mt-2">
+                        {/* Action Bar */}
+                        <div className="flex flex-wrap items-center gap-4 mb-12">
                             <Link
                                 href="/posts"
-                                className="group relative px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold rounded-full transition-all duration-300 shadow-xl shadow-blue-600/25 hover:shadow-2xl hover:shadow-blue-600/40 hover:-translate-y-1 overflow-hidden"
+                                className="inline-flex items-center justify-center h-12 px-8 text-sm font-bold text-white transition-all bg-[#0969da] hover:bg-[#085bb5] rounded-[4px]"
                             >
-                                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                                <span className="relative flex items-center justify-center gap-2">
-                                    Start Reading <ArrowRight size={20} />
-                                </span>
+                                Start Reading
+                                <ArrowUpRight className="ml-2 w-4 h-4" />
                             </Link>
 
-                            {/* Social Links */}
-                            {publication?.links && (
-                                <div className="flex items-center gap-3">
-                                    <SocialIcon type="github" url={publication.links.github} />
-                                    <SocialIcon type="twitter" url={publication.links.twitter} />
-                                    <SocialIcon type="linkedin" url={publication.links.linkedin} />
-                                    <SocialIcon type="youtube" url={publication.links.youtube} />
-                                    <SocialIcon type="website" url={publication.links.website} />
-                                </div>
-                            )}
+                            <Link
+                                href="/projects"
+                                className="inline-flex items-center justify-center h-12 px-8 text-sm font-bold text-text-secondary transition-all bg-transparent border border-border-custom hover:border-text-secondary hover:text-foreground rounded-[4px]"
+                            >
+                                <Terminal className="mr-2 w-4 h-4" />
+                                View Projects
+                            </Link>
                         </div>
 
-                        {/* Optional Stats or Tags */}
-                        {featuredPost?.tags && (
-                            <div className="pt-6 border-t border-border-custom bg-transparent flex flex-wrap justify-center lg:justify-start gap-3">
-                                {featuredPost.tags.slice(0, 3).map(tag => (
-                                    <span key={tag.name} className="text-sm font-semibold text-text-secondary bg-surface border border-border-custom px-3 py-1 rounded-lg">
-                                        #{tag.name}
-                                    </span>
+                        {/* Social Links - Technical Row */}
+                        {socialLinks.length > 0 && (
+                            <div className="flex items-center gap-6 pt-8 border-t border-dashed border-border-custom">
+                                {socialLinks.map((link) => (
+                                    <a
+                                        key={link.label}
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-text-secondary hover:text-[#0969da] transition-colors"
+                                        aria-label={link.label}
+                                    >
+                                        <link.icon size={20} strokeWidth={2} />
+                                    </a>
                                 ))}
                             </div>
                         )}
                     </div>
 
-                    {/* Right Visual Area */}
-                    <div className="lg:w-1/2 w-full perspective-1000">
-                        {featuredPost ? (
-                            <div className="relative group perspective-1000">
-                                {/* Glow Underlay */}
-                                <div className="absolute -inset-4 bg-gradient-to-tr from-blue-600/30 to-indigo-600/30 rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-                                <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden border border-white/10 dark:border-white/5 shadow-2xl transition-all duration-500 group-hover:scale-[1.02] bg-surface">
-                                    <Image
-                                        src={featuredImage}
-                                        alt={featuredPost.title}
-                                        fill
-                                        unoptimized={isRemoteImage}
-                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                        sizes="(max-width: 768px) 100vw, 50vw"
-                                        priority
-                                    />
-
-                                    {/* Glass Overlay Content */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80" />
-
-                                    <div className="absolute bottom-0 left-0 right-0 p-8 text-white z-20 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-
-                                        {/* Post Metadata */}
-                                        <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-wider text-blue-200 mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                                            <div className="flex items-center gap-1.5">
-                                                <Calendar size={14} />
-                                                {formatDate(featuredPost.publishedAt)}
-                                            </div>
-                                            <div className="w-1 h-1 rounded-full bg-blue-200/50" />
-                                            <div className="flex items-center gap-1.5">
-                                                <Clock size={14} />
-                                                {featuredPost.readTimeInMinutes || Math.max(1, Math.ceil((featuredPost.content?.html?.length || 0) / 2000))} min read
-                                            </div>
-                                        </div>
-
-                                        <h2 className="text-2xl md:text-3xl font-bold leading-tight mb-3 drop-shadow-md">
-                                            {featuredPost.title}
-                                        </h2>
-
-                                        <p className="text-gray-300 text-sm md:text-base line-clamp-2 mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
-                                            {featuredPost.brief}
-                                        </p>
-
-                                        <Link
-                                            href={`/posts/${featuredPost.slug}`}
-                                            className="inline-flex items-center gap-2 px-6 py-2 bg-white text-blue-900 font-bold rounded-full text-sm opacity-0 group-hover:opacity-100 transition-all duration-500 delay-300 hover:bg-blue-50"
-                                        >
-                                            Read Article <ArrowRight size={16} />
-                                        </Link>
+                    {/* Right Column: Featured "Deployment" Card */}
+                    {featuredPost && (
+                        <div className="hidden lg:block w-full max-w-md">
+                            <div className="bg-surface border border-border-custom p-1 rounded-[4px] shadow-sm">
+                                {/* Fake Browser/Terminal Header */}
+                                <div className="flex items-center justify-between px-3 py-2 bg-muted border-b border-border-custom rounded-t-[2px]">
+                                    <div className="flex gap-1.5">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-red-400/80"></div>
+                                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80"></div>
+                                        <div className="w-2.5 h-2.5 rounded-full bg-green-400/80"></div>
                                     </div>
+                                    <div className="text-[10px] font-mono text-text-secondary">latest_deployment.mdx</div>
+                                </div>
 
-                                    {/* Feature Badge */}
-                                    <div className="absolute top-6 right-6 z-20 px-3 py-1.5 bg-blue-600/90 backdrop-blur-md rounded-full text-white text-[10px] font-bold uppercase tracking-wider shadow-lg border border-white/10">
-                                        Featured
+                                {/* Card Content */}
+                                <div className="p-0">
+                                    <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+                                        {featuredPost.coverImage?.url && (
+                                            <Image
+                                                src={featuredPost.coverImage.url}
+                                                alt={featuredPost.title}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        )}
+                                    </div>
+                                    <div className="p-5">
+                                        <div className="flex gap-2 mb-3">
+                                            {featuredPost.tags?.slice(0, 2).map(tag => (
+                                                <span key={tag.name} className="px-1.5 py-0.5 text-[10px] font-mono font-medium text-[#0969da] bg-blue-50 dark:bg-blue-900/20 rounded-[2px] border border-blue-100 dark:border-blue-900">
+                                                    #{tag.name}
+                                                </span>
+                                            ))}
+                                        </div>
+                                        <h3 className="font-bold text-lg leading-tight mb-2 hover:text-[#0969da] transition-colors">
+                                            <Link href={`/posts/${featuredPost.slug}`}>
+                                                {featuredPost.title}
+                                            </Link>
+                                        </h3>
+                                        <div className="flex items-center gap-4 mt-4 text-xs font-mono text-text-secondary">
+                                            <span className="flex items-center gap-1">
+                                                <Calendar size={12} />
+                                                {new Date(featuredPost.publishedAt).toLocaleDateString()}
+                                            </span>
+                                            {featuredPost.readTimeInMinutes && (
+                                                <span className="flex items-center gap-1">
+                                                    <Clock size={12} />
+                                                    {featuredPost.readTimeInMinutes} min read
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        ) : (
-                            <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-border-custom">
-                                <p className="text-text-secondary font-medium">No featured post available</p>
-                            </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
 
                 </div>
             </div>
-        </div>
+        </section>
     );
 };
 

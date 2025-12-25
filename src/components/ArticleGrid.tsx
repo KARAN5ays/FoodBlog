@@ -130,7 +130,7 @@ const ArticleGrid = ({ posts, publication }: ArticleGridProps) => {
               <button
                 onClick={handleLoadMore}
                 suppressHydrationWarning
-                className="px-8 py-3 bg-white dark:bg-slate-800 border border-border-custom hover:border-blue-500 text-foreground font-bold rounded-full shadow-sm hover:shadow-md transition-all active:scale-95"
+                className="px-8 py-3 bg-muted border border-border-custom hover:border-blue-500 text-foreground font-bold rounded-full shadow-sm hover:shadow-md transition-all active:scale-95"
               >
                 Load More Articles
               </button>

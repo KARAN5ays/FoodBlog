@@ -161,7 +161,7 @@ const SINGLE_POST_QUERY = `
   }
 `;
 
-export const getPosts = async (first: number = 10, after?: string): Promise<{ edges: PostEdge[], pageInfo: any }> => {
+export const getPosts = async (first: number = 10, after?: string): Promise<{ edges: PostEdge[], pageInfo: any, totalDocuments: number }> => {
   try {
     const res = await fetch(HASHNODE_API, {
       method: 'POST',
@@ -179,7 +179,7 @@ export const getPosts = async (first: number = 10, after?: string): Promise<{ ed
 
     if (!res.ok) {
       console.error(`HTTP error! status: ${res.status}`);
-      return { edges: [], pageInfo: {} };
+      return { edges: [], pageInfo: {}, totalDocuments: 0 };
     }
 
     const json = await res.json();
@@ -192,22 +192,23 @@ export const getPosts = async (first: number = 10, after?: string): Promise<{ ed
         })),
         query: 'POSTS_QUERY'
       });
-      return { edges: [], pageInfo: {} };
+      return { edges: [], pageInfo: {}, totalDocuments: 0 };
     }
 
     const postsData = json?.data?.publication?.posts;
     const edges: PostEdge[] = postsData?.edges || [];
     const pageInfo = postsData?.pageInfo || {};
+    const totalDocuments = postsData?.totalDocuments || 0;
 
     const sortedEdges = edges
       .filter(edge => edge?.node?.publishedAt)
       .sort((a, b) => new Date(b.node.publishedAt).getTime() - new Date(a.node.publishedAt).getTime());
 
-    return { edges: sortedEdges, pageInfo };
+    return { edges: sortedEdges, pageInfo, totalDocuments };
 
   } catch (error) {
     console.error("Error fetching posts:", error);
-    return { edges: [], pageInfo: {} };
+    return { edges: [], pageInfo: {}, totalDocuments: 0 };
   }
 };
 
@@ -443,5 +444,61 @@ export const getSeries = async (slug: string): Promise<HashnodeSeries | null> =>
       slug: cleanSlug || slug
     });
     return null;
+  }
+};
+
+export const getSeriesList = async (first: number = 10): Promise<{ id: string, name: string, slug: string, description?: { html?: string }, coverImage?: string, posts: { totalDocuments: number } }[]> => {
+  try {
+    console.log(`[Hashnode] Fetching series list for host: ${HASHNODE_DOMAIN}`);
+    const SERIES_LIST_QUERY = `
+      query GetSeriesList($host: String!, $first: Int!) {
+        publication(host: $host) {
+          id
+          seriesList(first: $first) {
+            edges {
+              node {
+                id
+                name
+                slug
+                description {
+                  html
+                }
+                coverImage
+                posts(first: 1) {
+                  totalDocuments
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const res = await fetch(HASHNODE_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: SERIES_LIST_QUERY,
+        variables: { host: HASHNODE_DOMAIN, first }
+      }),
+      next: { revalidate: 3600 }
+    });
+
+    if (!res.ok) {
+      console.error(`[Hashnode] API Error in getSeriesList: ${res.status} ${res.statusText}`);
+      return [];
+    }
+
+    const json = await res.json();
+
+    if (json.errors) {
+      console.error('[Hashnode] GraphQL errors in getSeriesList:', JSON.stringify(json.errors, null, 2));
+      return [];
+    }
+
+    return json?.data?.publication?.seriesList?.edges?.map((edge: any) => edge.node) || [];
+  } catch (error) {
+    console.error("[Hashnode] Exception in getSeriesList:", error);
+    return [];
   }
 };

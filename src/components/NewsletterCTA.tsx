@@ -29,7 +29,7 @@ const NewsletterCTA = ({ publication }: NewsletterCTAProps) => {
 
             <section className="py-24 relative overflow-hidden" suppressHydrationWarning>
                 {/* Background Decoration */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-muted/50 dark:to-muted/10 pointer-events-none" />
+                <div className="absolute inset-0 bg-muted/30 dark:bg-muted/10 pointer-events-none" />
 
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-6xl mx-auto bg-surface rounded-[2.5rem] shadow-2xl shadow-blue-900/5 dark:shadow-black/20 border border-border-custom overflow-hidden">

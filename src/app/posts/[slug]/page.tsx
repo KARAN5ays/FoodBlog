@@ -6,6 +6,7 @@ import { Metadata } from 'next';
 import { Calendar, Clock, ChevronLeft, Folder } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
+import InteractionButtons from '@/components/InteractionButtons';
 
 export async function generateMetadata({
     params,
@@ -73,7 +74,7 @@ export default async function PostDetail({
                                     </div>
                                 )}
 
-                                <h1 className="text-3xl md:text-5xl font-extrabold mb-6 leading-tight bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+                                <h1 className="text-3xl md:text-5xl font-extrabold mb-6 leading-tight bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:via-blue-100 dark:to-slate-200 bg-clip-text text-transparent">
                                     {post.title}
                                 </h1>
 
@@ -117,6 +118,11 @@ export default async function PostDetail({
                                     className="article-content max-w-none prose dark:prose-invert prose-blue"
                                     dangerouslySetInnerHTML={{ __html: post.content?.html || '' }}
                                 />
+
+                                {/* Interaction Buttons */}
+                                <div className="mt-12 flex justify-center">
+                                    <InteractionButtons postSlug={post.slug} />
+                                </div>
 
                                 <div className="mt-16 pt-8 border-t border-border-custom flex flex-col md:flex-row items-center justify-between gap-6">
                                     <div className="flex items-center gap-4">
