@@ -121,7 +121,7 @@ export default async function Home({
             <h2 className="text-4xl md:text-5xl font-black mb-4 text-foreground tracking-tight">
               {publication?.displayTitle || publication?.title || 'Publication'} Insights
             </h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-text-secondary max-w-2xl mx-auto leading-relaxed">
               {publication?.descriptionSEO || 'Track our latest articles, community engagement, and growth.'}
             </p>
           </div>

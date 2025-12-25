@@ -70,20 +70,52 @@ const Footer = ({ publication }: FooterProps) => {
                   Explore
                 </Link>
               </li>
-              {publication?.preferences?.navbarItems?.slice(0, 4).map((item, idx) => (
-                <li key={idx}>
-                  <Link
-                    href={item.url || (item.type === 'series' ? `/series/${item.series?.slug}` : item.type === 'page' ? `/pages/${item.page?.slug}` : '#')}
-                    target={item.type === 'link' ? '_blank' : undefined}
-                    className="group flex items-center gap-3 text-text-secondary hover:text-blue-600 dark:hover:text-blue-400 transition-all"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-border-custom flex items-center justify-center group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-colors">
-                      <Rss size={14} />
-                    </div>
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              {publication?.preferences?.navbarItems?.slice(0, 4).map((item, idx) => {
+                const getHref = () => {
+                  if (item.type === 'series' && item.series?.slug) {
+                    return `/series/${item.series.slug}`;
+                  }
+                  if (item.type === 'page' && item.page?.slug) {
+                    return `/pages/${item.page.slug}`;
+                  }
+                  // Handle manual links (e.g. "About" or "All Articles") that might point to the deployed domain
+                  if (item.url) {
+                    try {
+                      // If the link uses the publication's domain, treat it as internal (relative)
+                      if (publication?.url) {
+                        const itemUrl = new URL(item.url);
+                        const pubUrl = new URL(publication.url);
+                        if (itemUrl.origin === pubUrl.origin) {
+                          return itemUrl.pathname;
+                        }
+                      }
+                    } catch (e) {
+                      // Invalid URL, fall through
+                    }
+                    return item.url;
+                  }
+                  return '#';
+                };
+
+                const href = getHref();
+                const isInternal = href.startsWith('/');
+
+                return (
+                  <li key={idx}>
+                    <Link
+                      href={href}
+                      // Only open external links in new tab
+                      target={!isInternal ? '_blank' : undefined}
+                      className="group flex items-center gap-3 text-text-secondary hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-border-custom flex items-center justify-center group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 transition-colors">
+                        <Rss size={14} />
+                      </div>
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 

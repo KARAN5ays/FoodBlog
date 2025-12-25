@@ -69,10 +69,10 @@ const LiveStats = ({ stats }: LiveStatsProps) => {
           <div className="flex justify-center">
             {getIconForLabel(stat.label)}
           </div>
-          <div className="text-4xl font-bold mb-2 text-slate-900 dark:text-white">
+          <div className="text-4xl font-bold mb-2 text-foreground">
             {animatedValues[stat.label] || 0}{stat.suffix}
           </div>
-          <div className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
+          <div className="text-sm text-text-secondary uppercase tracking-wider font-bold">
             {stat.label}
           </div>
         </div>

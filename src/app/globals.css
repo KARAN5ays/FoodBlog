@@ -1,64 +1,46 @@
 @import "tailwindcss";
 
 @theme {
+  /* Core Engineering Palette */
   --color-background: var(--bg-body);
   --color-foreground: var(--text-primary);
-
   --color-surface: var(--bg-surface);
   --color-muted: var(--bg-muted);
   --color-border-custom: var(--border-color);
   --color-text-secondary: var(--text-secondary);
   --color-link: var(--link);
 
-  --background-image-dark: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.08), transparent 40%),
-    radial-gradient(circle at 85% 85%, rgba(79, 70, 229, 0.08), transparent 40%),
-    var(--bg-body);
-
-  --bg-grid-light: linear-gradient(to right, #e2e8f0 1px, transparent 1px),
-    linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
-  --bg-grid-dark: linear-gradient(to right, #1e293b 1px, transparent 1px),
-    linear-gradient(to bottom, #1e293b 1px, transparent 1px);
+  /* Technical Grid Backgrounds */
+  --bg-grid-light: radial-gradient(#e2e8f0 1px, transparent 1px);
+  --bg-grid-dark: radial-gradient(#1e293b 1px, transparent 1px);
 }
 
 :root {
-  --bg-body: #f8fafc;
-  /* Slightly cooler white */
+  /* Pure High-Contrast Light Mode */
+  --bg-body: #ffffff;
   --bg-surface: #ffffff;
-  --bg-muted: #f1f5f9;
+  --bg-muted: #f8fafc;
   --border-color: #e2e8f0;
   --text-primary: #0f172a;
-  /* Slate 900 */
-  --text-secondary: #64748b;
-  /* Slate 500 */
+  --text-secondary: #475569;
   --link: #2563eb;
 
-  --font-inter: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-
-  --bg-grid-light: linear-gradient(to right, #e2e8f0 1px, transparent 1px),
-    linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+  --font-inter: "Inter", system-ui, -apple-system, sans-serif;
+  --radius: 6px;
+  /* Sharper corners for engineering feel */
 }
 
 [class~="dark"] {
-  --bg-body: #020617;
-  /* Slate 950 - deeper black */
-  --bg-surface: #0f172a;
-  /* Slate 900 */
-  --bg-muted: #1e293b;
-  /* Slate 800 */
-  --border-color: #1e293b;
-  /* Slate 800 */
-  --text-primary: #f8fafc;
-  /* Slate 50 */
-  --text-secondary: #94a3b8;
-  /* Slate 400 */
-  --link: #60a5fa;
-
-  --bg-grid-dark: linear-gradient(to right, #1e293b 1px, transparent 1px),
-    linear-gradient(to bottom, #1e293b 1px, transparent 1px);
-
-  --background-image-dark: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.08), transparent 40%),
-    radial-gradient(circle at 85% 85%, rgba(79, 70, 229, 0.08), transparent 40%),
-    var(--bg-body);
+  /* Deep Matte Dark Mode */
+  --bg-body: #0d1117;
+  /* GitHub Dark Style */
+  --bg-surface: #161b22;
+  /* Elevated Card Surface */
+  --bg-muted: #21262d;
+  --border-color: #30363d;
+  --text-primary: #f0f6fc;
+  --text-secondary: #8b949e;
+  --link: #58a6ff;
 }
 
 body {
@@ -67,14 +49,8 @@ body {
   font-family: var(--font-inter);
   min-height: 100vh;
   margin: 0;
-  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-[class~="dark"] body {
-  background: var(--background-image-dark);
-  background-attachment: fixed;
+  /* Smooth, professional transition */
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Custom Scrollbar Utility */
@@ -88,177 +64,68 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(148, 163, 184, 0.4);
+  background-color: var(--border-color);
   border-radius: 99px;
   border: 2px solid transparent;
   background-clip: content-box;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(148, 163, 184, 0.6);
-}
-
-/* Article Content Styles */
+/* Article Content Styles (Engineering Documentation Aesthetic) */
 .article-content {
-  font-size: 1.125rem;
-  /* 18px */
-  line-height: 1.85;
+  font-size: 1.1rem;
+  line-height: 1.75;
   color: var(--text-primary);
 }
 
 .article-content h1,
 .article-content h2,
-.article-content h3,
-.article-content h4 {
-  margin-top: 2.5rem;
-  margin-bottom: 1.25rem;
+.article-content h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
   font-weight: 800;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   color: var(--text-primary);
-}
-
-.article-content p {
-  margin-bottom: 1.75rem;
 }
 
 .article-content pre,
 .article-content code {
   background: var(--bg-muted);
-  border-radius: 0.5rem;
+  border-radius: 4px;
   border: 1px solid var(--border-color);
-  padding: .25rem .5rem;
+  padding: .2rem .4rem;
   font-size: .9em;
-  font-family: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+  font-family: 'ui-monospace', 'JetBrains Mono', monospace;
 }
 
 .article-content pre {
-  padding: 1.5rem;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
   overflow-x: auto;
 }
 
-.article-content pre code {
-  background: transparent;
-  border: none;
-  padding: 0;
-}
-
 .article-content blockquote {
-  background: linear-gradient(to right, rgba(59, 130, 246, 0.1), transparent);
-  border-left: 4px solid #3b82f6;
-  margin: 2rem 0;
-  padding: 1rem 1.75rem;
+  border-left: 4px solid var(--link);
+  margin: 1.5rem 0;
+  padding: 0.5rem 1.5rem;
   color: var(--text-secondary);
-  font-style: italic;
-  font-weight: 500;
-  border-radius: 0 0.5rem 0.5rem 0;
+  background: var(--bg-muted);
 }
 
-.article-content img {
-  max-width: 100%;
-  border-radius: 1rem;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.12);
-  margin: 2.5rem auto;
-  border: 1px solid var(--border-color);
-}
-
-.article-content ul,
-.article-content ol {
-  padding-left: 1.75rem;
-  margin-bottom: 1.75rem;
-}
-
-.article-content li {
-  margin-bottom: 0.75rem;
-  padding-left: 0.5rem;
-}
-
-.article-content table {
-  width: 100%;
-  margin: 2.5rem 0;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  background: var(--bg-surface);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--border-color);
-}
-
-.article-content th,
-.article-content td {
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border-color);
-  text-align: left;
-}
-
-.article-content th {
-  background-color: var(--bg-muted);
-  font-weight: 600;
-  font-size: 0.95em;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-secondary);
-}
-
-/* Premium UI Utilities */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
-    0 2px 4px -1px rgba(0, 0, 0, 0.03);
-}
-
-[class~="dark"] .glass-panel {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-}
-
-.glass-card {
+/* Technical Card Styles - Replacing Blurry Glass Effects */
+.engineering-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease-in-out;
 }
 
-.glass-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+.engineering-card:hover {
   border-color: var(--link);
+  background: var(--bg-muted);
 }
 
-[class~="dark"] .glass-card {
-  background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(8px);
-}
-
-.shadow-soft {
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03),
-    0 1px 1px -0.5px rgba(0, 0, 0, 0.03),
-    0 3px 3px -1.5px rgba(0, 0, 0, 0.03),
-    0 6px 6px -3px rgba(0, 0, 0, 0.03),
-    0 12px 12px -6px rgba(0, 0, 0, 0.03),
-    0 24px 24px -12px rgba(0, 0, 0, 0.03);
-}
-
-[class~="dark"] .shadow-soft {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05),
-    0 2px 4px rgba(0, 0, 0, 0.2),
-    0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.text-gradient {
-  background: linear-gradient(135deg, #2563eb, #4f46e5);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-[class~="dark"] .text-gradient {
-  background: linear-gradient(135deg, #60a5fa, #818cf8);
-}
-
-.article-content tr:last-child td {
-  border-bottom: none;
+/* Professional Utilities */
+.text-mono {
+  font-family: 'ui-monospace', 'SFMono-Regular', monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }

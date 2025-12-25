@@ -8,52 +8,40 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Essential Engineering Palette
         border: 'var(--border-custom)',
-        input: 'var(--bg-muted)',
-        ring: 'var(--link)',
         background: 'var(--bg-body)',
         foreground: 'var(--text-primary)',
+        surface: 'var(--bg-surface)',
+        "text-secondary": 'var(--text-secondary)',
+        link: 'var(--link)',
+        input: 'var(--bg-muted)',
+
+        // Brand Colors
         primary: {
           DEFAULT: 'var(--text-primary)',
           foreground: 'var(--bg-body)',
         },
-        secondary: {
-          DEFAULT: 'var(--bg-muted)',
-          foreground: 'var(--text-secondary)',
-        },
-        destructive: {
-          DEFAULT: '#ef4444',
-          foreground: '#ffffff',
-        },
-        muted: {
-          DEFAULT: 'var(--bg-muted)',
-          foreground: 'var(--text-secondary)',
-        },
-        accent: {
-          DEFAULT: 'var(--bg-muted)',
-          foreground: 'var(--text-primary)',
-        },
-        popover: {
-          DEFAULT: 'var(--bg-surface)',
-          foreground: 'var(--text-primary)',
-        },
-        card: {
-          DEFAULT: 'var(--bg-surface)',
-          foreground: 'var(--text-primary)',
-        },
+        // Professional Dev Blue
+        dev: {
+          blue: '#0969da',
+        }
       },
       borderRadius: {
+        // Sharp technical corners
+        'dev': '4px',
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        // Added for technical metadata/counters
+        mono: ['var(--font-geist-mono)', 'ui-monospace', 'monospace'],
       },
       animation: {
         'fade-in': 'fadeIn 0.6s ease-in-out',
         'slide-up': 'slideUp 0.6s ease-out',
-        'scale-in': 'scaleIn 0.5s ease-out',
       },
       keyframes: {
         fadeIn: {
@@ -64,13 +52,9 @@ module.exports = {
           '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
-        scaleIn: {
-          '0%': { transform: 'scale(0.95)', opacity: '0' },
-          '100%': { transform: 'scale(1)', opacity: '1' },
-        },
       },
     },
   },
   plugins: [],
-  darkMode: 'class',
+  darkMode: 'class', // Required for manual theme switching
 }
