@@ -94,7 +94,7 @@ const LearningPaths = ({ series }: LearningPathsProps) => {
                                 />
 
                                 {/* Action Footer */}
-                                <div className="pt-4 border-t border-border/50 flex items-center justify-between text-xs font-bold tracking-widest uppercase text-foreground/70 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                <div className="pt-4 flex items-center justify-between text-xs font-bold tracking-widest uppercase text-foreground/70 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                     <span>Start Learning</span>
                                     <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                                 </div>

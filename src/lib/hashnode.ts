@@ -161,6 +161,21 @@ const SINGLE_POST_QUERY = `
   }
 `;
 
+const STATIC_PAGE_QUERY = `
+  query GetStaticPage($host: String!, $slug: String!) {
+    publication(host: $host) {
+      id
+      staticPage(slug: $slug) {
+        id
+        title
+        content {
+          html
+        }
+      }
+    }
+  }
+`;
+
 export const getPosts = async (first: number = 10, after?: string): Promise<{ edges: PostEdge[], pageInfo: any, totalDocuments: number }> => {
   try {
     const res = await fetch(HASHNODE_API, {
@@ -500,5 +515,26 @@ export const getSeriesList = async (first: number = 10): Promise<{ id: string, n
   } catch (error) {
     console.error("[Hashnode] Exception in getSeriesList:", error);
     return [];
+  }
+};
+
+export const getStaticPage = async (slug: string) => {
+  try {
+    const res = await fetch(HASHNODE_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: STATIC_PAGE_QUERY,
+        variables: { host: HASHNODE_DOMAIN, slug }
+      }),
+      next: { revalidate: 3600 }
+    });
+
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json?.data?.publication?.staticPage || null;
+  } catch (error) {
+    console.error(`Error fetching static page ${slug}:`, error);
+    return null;
   }
 };

@@ -221,10 +221,10 @@ const Footer = ({ publication }: FooterProps) => {
             </div>
 
             <div className="flex gap-8 text-sm font-medium">
-              <Link href="/privacy" className="text-text-secondary hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              <Link href="/pages/privacy" className="text-text-secondary hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="text-text-secondary hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              <Link href="/pages/terms" className="text-text-secondary hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                 Terms of Service
               </Link>
               <Link href="/sitemap" className="text-text-secondary hover:text-blue-600 dark:hover:text-blue-400 transition-colors">

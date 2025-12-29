@@ -74,7 +74,7 @@ export default async function PostDetail({
                                     </div>
                                 )}
 
-                                <h1 className="text-3xl md:text-5xl font-extrabold mb-6 leading-tight bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:via-blue-100 dark:to-slate-200 bg-clip-text text-transparent">
+                                <h1 className="text-3xl md:text-6xl font-black mb-6 leading-tight text-foreground tracking-tight">
                                     {post.title}
                                 </h1>
 
